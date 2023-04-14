@@ -1,4 +1,8 @@
-CREATE TABLE movie(
+CREATE DATABASE IF NOT EXISTS moviedb;
+
+USE moviedb;
+
+CREATE TABLE movies(
     `id` VARCHAR(10) NOT NULL,
     `title` VARCHAR(100) NOT NULL,
     `year` INTEGER NOT NULL NOT NULL,
@@ -27,11 +31,20 @@ CREATE TABLE genres (
 );
 
 CREATE TABLE genres_in_movies(
-    `genreId`: INTEGER NOT NULL,
-    `movieId`: VARCHAR(10) NOT NULL,
-    FOREIGN KEY (`genreId`) REFERENCES stars(`id`),
+    `genreId` INTEGER NOT NULL,
+    `movieId` VARCHAR(10) NOT NULL,
+    FOREIGN KEY (`genreId`) REFERENCES genres(`id`),
     FOREIGN KEY (`movieId`) REFERENCES movies(`id`)
 );
+
+CREATE TABLE creditcards(
+    `id` VARCHAR(20) NOT NULL,
+    `firstName` VARCHAR(50) NOT NULL,
+    `lastName` VARCHAR(50) NOT NULL,
+    `expiration` DATE,
+    PRIMARY KEY (`id`)
+);
+
 
 CREATE TABLE customers(
     `id` INTEGER AUTO_INCREMENT NOT NULL,
@@ -48,19 +61,11 @@ CREATE TABLE customers(
 CREATE TABLE sales (
     `id` INTEGER AUTO_INCREMENT NOT NULL,
     `customerId` INTEGER NOT NULL,
-    `movidid` VARCHAR(10) NOT NULL,
+    `movieId` VARCHAR(10) NOT NULL,
     `saleDate` DATE NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customerId`) REFERENCES customers(`id`),
     FOREIGN KEY (`movieId`) REFERENCES movies(`id`)
-);
-
-CREATE TABLE creditcards(
-    `id` VARCHAR(20) NOT NULL,
-    `firstName` VARCHAR(50) NOT NULL,
-    `lastName` VARCHAR(50) NOT NULL,
-    `expiration` DATE,
-    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE ratings (
