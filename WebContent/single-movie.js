@@ -41,21 +41,21 @@ function handleResult(resultData) {
     console.log("handleResult: populating movie info from resultData");
 
     // populate the movie info h3
-    // find the empty h3 body by id "movie_info"
-    let movieInfoElement = jQuery("#movie_info");
-
-    // append two html <p> created to the h3 body, which will refresh the page
-    movieInfoElement.append("" +
-        "<p>Movie Title: " + resultData["title"] + "</p>" +
-        "<p>Director: " + resultData["director"] + "</p>" +
-        "<p>Year: " + resultData["year"] + "</p>" +
-        "<p>Genres: " + resultData["genres"] + "</p>" +
-        "<p>Rating: " + resultData["rating"] + "</p>" +
-        "<p>Stars: " + resultData["stars"].map(
+    $("#movie-info-title").text(resultData["title"]);
+    $("#movie-info-director").text(resultData["director"]);
+    $("#movie-info-year").text(resultData["year"]);
+    $("#movie-info-genres").text(resultData["genres"]);
+    $("#movie-info-rating").text(resultData["rating"]);
+    $("#movie-info-stars").html(
+        resultData["stars"].map(
             (star) => `<a href="single-star.html?id=${star['id']}">${star['name']}</a>`
-        ).join(", ") + "</p>"
+        ).join(", ")
     );
 }
+
+// Load common header and footer
+$("#header").load("header.html");
+// $("#footer").load("footer.html");
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser\
