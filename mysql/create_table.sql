@@ -93,7 +93,7 @@ FROM (((((`moviedb`.`movies` `m`
     JOIN `moviedb`.`ratings` `r` ON ((`m`.`id` = `r`.`movieId`)))
     JOIN `moviedb`.`stars_in_movies` `sm` ON ((`m`.`id` = `sm`.`movieId`)))
     JOIN `moviedb`.`stars` `s` ON ((`sm`.`starId` = `s`.`id`)))
-ORDER BY `r`.`rating` DESC
+ORDER BY `r`.`rating` DESC;
 
 -- CREATE movie_rating --
 CREATE VIEW `moviedb`.`movie_rating` AS
@@ -102,7 +102,7 @@ SELECT `m`.`id`     AS `id`,
 FROM (`moviedb`.`movies` `m`
     JOIN `moviedb`.`ratings` `r`)
 WHERE (`m`.`id` = `r`.`movieId`)
-ORDER BY `r`.`rating` DESC
+ORDER BY `r`.`rating` DESC;
 
 -- CREATE star_list --
 CREATE VIEW `moviedb`.`star_list` AS
@@ -118,4 +118,4 @@ FROM ((`moviedb`.`stars` `s`
     JOIN `moviedb`.`stars_in_movies` `sm`)
 WHERE ((`m`.`id` = `sm`.`movieId`)
     AND (`s`.`id` = `sm`.`starId`))
-ORDER BY `s`.`id`
+ORDER BY `s`.`id`;
