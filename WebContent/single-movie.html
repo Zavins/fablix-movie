@@ -17,26 +17,54 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="single-movie.css">
+
     <title>Single Star</title>
 </head>
 <body>
-<h3><a href='/movie-list.html'>Back to movie list</a></h3>
-<h1>Single Movie Page</h1>
+    <div id="header"></div>
+    <div class="m-3">
+    <a href='movie-list.html'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+            <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"/>
+        </svg>
+        Back to Movie List
+    </a>
+    <h1 class="display-4 fw-bold text-center">Movie Information</h1>
 
-<!-- H3 body is left empty here, will be populated with the data retrieved with single-star.js -->
-<!-- single-star.js will find this html element by it's id "star_info" -->
-<h3 id="movie_info"></h3>
+    <!-- H3 body is left empty here, will be populated with the data retrieved with single-star.js -->
+    <!-- single-star.js will find this html element by it's id "star_info" -->
+    <div id="content" class="shadow-lg border rounded p-5 text-white">
+        <h4>Movie Title</h4>
+        <p id="movie-info-title" class="mx-5 my-3"></p>
+        <hr class="hr bg-white" />
+        <h4>Director</h4>
+        <p id="movie-info-director" class="mx-5 my-3"></p>
+        <hr class="hr bg-white" />
+        <h4>Year</h4>
+        <p id="movie-info-year" class="mx-5 my-3"></p>
+        <hr class="hr bg-white" />
+        <h4>Genres</h4>
+        <p id="movie-info-genres" class="mx-5 my-3"></p>
+        <hr class="hr bg-white" />
+        <h4>Rating</h4>
+        <p id="movie-info-rating" class="mx-5 my-3"></p>
+        <hr class="hr bg-white" />
+        <h4>Stars</h4>
+        <p id="movie-info-stars" class="mx-5 my-3"></p>
+    </div>
+    </div>
 
-<!-- Load jQuery and Bootstrap JS -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- Load jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-<!-- Load our own JS file -->
-<!-- The path is relative to single-star.html, since these two files are in the same directory -->
-<!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
-     otherwise the url is relative to the root path-->
-<script src="single-movie.js"></script>
+    <!-- Load our own JS file -->
+    <!-- The path is relative to single-star.html, since these two files are in the same directory -->
+    <!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
+         otherwise the url is relative to the root path-->
+    <script src="single-movie.js"></script>
 </body>
 
 

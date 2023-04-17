@@ -41,12 +41,8 @@ function handleResult(resultData) {
     console.log("handleResult: populating star info from resultData");
 
     // populate the star info h3
-    // find the empty h3 body by id "star_info"
-    let starInfoElement = jQuery("#star_info");
-
-    // append two html <p> created to the h3 body, which will refresh the page
-    starInfoElement.append("<p>Star Name: " + resultData["name"] + "</p>" +
-        "<p>Year Of Birth: " + (resultData["birthYear"] !== 0 ? resultData["birthYear"] : "N/A") + "</p>");
+    $("#star-info-name").text(resultData["name"]);
+    $("#star-info-birth-year").text(resultData["birthYear"] !== 0 ? resultData["birthYear"] : "N/A");
 
     console.log("handleResult: populating movie table from resultData");
 
@@ -66,6 +62,10 @@ function handleResult(resultData) {
         movieTableBodyElement.append(rowHTML);
     })
 }
+
+// Load common header and footer
+$("#header").load("header.html");
+// $("#footer").load("footer.html");
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser\
