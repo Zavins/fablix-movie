@@ -58,7 +58,7 @@ public class LoginServlet extends HttpServlet {
             statement.setString(2, password);
             try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
-                rs.first();
+                rs.next();
                 return rs.getBoolean(1);
             }
         }
@@ -77,6 +77,7 @@ public class LoginServlet extends HttpServlet {
             if (checkUsername(conn, username)) {
                 if (checkPassword(conn, username, password)) {
                     response.setStatus(200);
+                    request.getSession().setAttribute("user", new User(username));
                 } else {
                     response.setStatus(401);
                     responseJsonObject.addProperty("message", "incorrect password");
