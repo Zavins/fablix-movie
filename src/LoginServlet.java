@@ -38,11 +38,10 @@ public class LoginServlet extends HttpServlet {
 
     // Check if email (username) exists
     private boolean checkUsername(Connection conn, String username) throws SQLException {
-
         String query = "SELECT EXISTS(SELECT * FROM `customers` WHERE `email` = ?)";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-            try (ResultSet rs = statement.executeQuery(query)) {
+            try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
                 rs.first();
                 return rs.getBoolean(1);
@@ -57,7 +56,7 @@ public class LoginServlet extends HttpServlet {
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password);
-            try (ResultSet rs = statement.executeQuery(query)) {
+            try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
                 rs.first();
                 return rs.getBoolean(1);
@@ -72,9 +71,6 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        /* This example only allows username/password to be test/test
-        /  in the real project, you should talk to the database to verify username/password
-        */
         JsonObject responseJsonObject = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
@@ -92,6 +88,7 @@ public class LoginServlet extends HttpServlet {
         } catch (Exception e) {
             response.setStatus(500);
             responseJsonObject.addProperty("message", e.getMessage());
+            e.printStackTrace();
         }
 
         response.setContentType("application/json");
