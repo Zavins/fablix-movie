@@ -1,0 +1,8 @@
+#advance-search, #utils-section {
+    transform: translate(0px, -60px);
+}
+
+.form-group {
+    height: 60px;
+    max-height: 60px;
+}
