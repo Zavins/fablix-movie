@@ -63,6 +63,7 @@ CREATE TABLE sales (
     `customerId` INTEGER NOT NULL,
     `movieId` VARCHAR(10) NOT NULL,
     `saleDate` DATE NOT NULL,
+    `quantity` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customerId`) REFERENCES customers(`id`),
     FOREIGN KEY (`movieId`) REFERENCES movies(`id`)
