@@ -170,7 +170,7 @@ None
   - price: float
 - total: float
 
-### PUT /api/cart
+### POST /api/cart
 
 Increase or decrease the quantity of a cart item.
 
@@ -203,7 +203,7 @@ Delete a movie from shopping cart.
   - 200 - OK
   - ...
 
-### POST /api/cart
+### POST /api/cart/checkout
 
 Place order.
 
