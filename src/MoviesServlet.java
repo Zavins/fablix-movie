@@ -95,9 +95,9 @@ public class MoviesServlet extends HttpServlet {
                 String starOrNull = request.getParameter("starName");
                 starName = starOrNull.isEmpty() ? null : URLDecoder.decode(starOrNull, "UTF-8");
                 String genreStr = request.getParameter("genre");
-                genreId = genreStr == null ? null : Integer.parseInt(genreStr);
+                genreId = genreStr.isEmpty() ? null : Integer.parseInt(genreStr);
                 String pageStr = request.getParameter("page");
-                page = pageStr == null ? 1 : Integer.parseInt(pageStr);
+                page = pageStr.isEmpty() ? 1 : Integer.parseInt(pageStr);
 
                 String sortByStr = request.getParameter("sortBy");
                 if (sortByStr == null) {
@@ -170,29 +170,31 @@ public class MoviesServlet extends HttpServlet {
                         rowJsonObject.addProperty("director", rowDirector);
                         rowJsonObject.addProperty("rating", rowRating);
 
-                        JsonArray genreList = new JsonArray();
-                        for (String genre : rowGenreList.split(";")) {
+                        JsonArray genreListJsonArray = new JsonArray();
+                        String[] genreList = rowGenreList.split(";", 4);
+                        for (int i = 0; i < Math.min(genreList.length, genreCount); ++i) {
+                            String genre = genreList[i];
                             JsonObject genreObj = new JsonObject();
                             int genreObjId = Integer.parseInt(genre.split("\\|")[0]);
                             String genreObjName = genre.split("\\|")[1];
                             genreObj.addProperty("id", genreObjId);
                             genreObj.addProperty("name", genreObjName);
-                            genreList.add(genreObj);
+                            genreListJsonArray.add(genreObj);
                         }
-                        // TODO: Limit to three
-                        rowJsonObject.add("genres", genreList);
+                        rowJsonObject.add("genres", genreListJsonArray);
 
-                        // TODO: Limit to three
-                        JsonArray starList = new JsonArray();
-                        for (String star : rowStarList.split(";")) {
+                        JsonArray starListJsonArray = new JsonArray();
+                        String[] starList = rowStarList.split(";", 4);
+                        for (int i = 0; i < Math.min(starList.length, starCount); ++i) {
+                            String star = starList[i];
                             JsonObject starObj = new JsonObject();
                             String starObjId = star.split("\\|")[0];
                             String starObjName = star.split("\\|")[1];
                             starObj.addProperty("id", starObjId);
                             starObj.addProperty("name", starObjName);
-                            starList.add(starObj);
+                            starListJsonArray.add(starObj);
                         }
-                        rowJsonObject.add("stars", starList);
+                        rowJsonObject.add("stars", starListJsonArray);
 
                         result.add(rowJsonObject);
                     }
