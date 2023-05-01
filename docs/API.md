@@ -16,6 +16,10 @@ Response:
 ### GET /api/movies
 
 **Request**
+- usePrevious: String
+  
+  Use the search parameter in the previous search. "0" or "1".
+
 - count?: int
 
   Number of records per page. (10, 25, 50, 100)
@@ -52,8 +56,8 @@ Response:
 
 - sortBy?: String
 
-  Array of attributes, which can be "title" or "rating".\
-  Separate by spaces. Example: "title rating".
+  Array of attributes and order, which can be "title" or "rating".\
+  Separate by spaces. Example: "title DESC, rating ASC".
 
 Note: 
 must have al least one of (title, year, starName, director, genre).
@@ -74,7 +78,7 @@ in the session.
 - director: String
 - starName: String
 - page: int
-- sortBy: List[String]
+- sortBy: String
 - result: List[Object]
   - id: String
   - title: String
@@ -82,9 +86,13 @@ in the session.
   - director: String
   - rating: float
   - genres: List
+    - id: int
+    - name: String
 
     Sorted by alphabetical order.
   - stars: List
+    - id: String
+    - name: String
 
     Sorted by number of movies played, desc.\
     Use alphabetical order to break ties.
@@ -160,7 +168,7 @@ None
   - movieTitle: String
   - quantity: int
   - price: float
-  - total: float
+- total: float
 
 ### PATCH /api/cart
 
