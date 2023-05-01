@@ -32,7 +32,7 @@ public class LoginFilter implements Filter {
 
         // Redirect to login page if the "user" attribute doesn't exist in session
         if (httpRequest.getSession().getAttribute("user") == null) {
-            httpResponse.sendRedirect("login.html");
+            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() + "/login.html");
         } else {
             chain.doFilter(request, response);
         }
@@ -53,6 +53,12 @@ public class LoginFilter implements Filter {
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
         allowedURIs.add("api/login");
+//        allowedURIs.add("api/movies");
+//        allowedURIs.add("api/movie");
+//        allowedURIs.add("api/genres");
+//        allowedURIs.add("api/star");
+//        allowedURIs.add("api/cart");
+//        allowedURIs.add("api/cart/checkout");
     }
 
     public void destroy() {
