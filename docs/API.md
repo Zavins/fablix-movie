@@ -170,9 +170,11 @@ None
   - price: float
 - total: float
 
-### PATCH /api/cart
+### PUT /api/cart
 
 Increase or decrease the quantity of a cart item.
+
+Used Put not Patch because HttpServlet does not support Patch.
 
 **Request**
 
@@ -218,8 +220,10 @@ Place order.
 
 - (status code)
   - 200 - OK
+  - 402 - Payment Required (incorrect credit card)
 - sales: List[Object]
   - id: int
   - movieTitle: String
   - quantity: int
-- totalPrice: float
+  - subtotal: float
+- total: float
