@@ -11,10 +11,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Map;
 
 @WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
@@ -59,13 +56,13 @@ public class MoviesServlet extends HttpServlet {
             String countStr = request.getParameter("count");
             count = Integer.parseInt(countStr);
             String yearStr = request.getParameter("year");
-            year = yearStr == null ? null : Integer.parseInt(yearStr);
+            year = yearStr.isEmpty() ? null : Integer.parseInt(yearStr);
             String titleOrNull = request.getParameter("title");
-            title = titleOrNull == null ? null : URLDecoder.decode(titleOrNull, "UTF-8");
+            title = titleOrNull.isEmpty() ? null : URLDecoder.decode(titleOrNull, "UTF-8");
             String directorOrNull = request.getParameter("director");
-            director = directorOrNull == null ? null : URLDecoder.decode(directorOrNull, "UTF-8");
-            String starOrNull = request.getParameter("star");
-            starName = starOrNull == null ? null : URLDecoder.decode(starOrNull, "UTF-8");
+            director = directorOrNull.isEmpty() ? null : URLDecoder.decode(directorOrNull, "UTF-8");
+            String starOrNull = request.getParameter("starName");
+            starName = starOrNull.isEmpty() ? null : URLDecoder.decode(starOrNull, "UTF-8");
             String genreStr = request.getParameter("genre");
             genreId = genreStr == null ? null : Integer.parseInt(genreStr);
             String pageStr = request.getParameter("page");
@@ -94,9 +91,11 @@ public class MoviesServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             String query =
-                    "SELECT m.`id`, m.`title`, m.`year`, m.`director`, r.`rating` " +
+                    "SELECT m.`id`, m.`title`, m.`year`, m.`director`, r.`rating`, mglv.`genreList`, mslv.`starList` " +
                             "FROM `moviedb`.`movies` m " +
                             "JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
+                            "JOIN `moviedb`.`movie_star_list_view` mslv ON m.`id` = mslv.`movieId` " +
+                            "JOIN `moviedb`.`movie_genre_list_view` mglv ON m.`id` = mglv.`movieId` " +
                             "WHERE " +
                             "(? OR m.`id` IN (SELECT gm.`movieId` FROM `moviedb`.`genres_in_movies` gm WHERE gm.`genreId` = ?))" +
                             "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` = ?)) " +
@@ -127,6 +126,8 @@ public class MoviesServlet extends HttpServlet {
                         int rowYear = rs.getInt("year");
                         String rowDirector = rs.getString("director");
                         float rowRating = rs.getFloat("rating");
+                        String rowGenreList = rs.getString("genreList");
+                        String rowStarList = rs.getString("starList");
 
                         JsonObject rowJsonObject = new JsonObject();
 
@@ -135,12 +136,39 @@ public class MoviesServlet extends HttpServlet {
                         rowJsonObject.addProperty("year", rowYear);
                         rowJsonObject.addProperty("director", rowDirector);
                         rowJsonObject.addProperty("rating", rowRating);
+
+                        JsonArray genreList = new JsonArray();
+                        for (String genre : rowGenreList.split(";")) {
+                            JsonObject genreObj = new JsonObject();
+                            int genreObjId = Integer.parseInt(genre.split("\\|")[0]);
+                            String genreObjName = genre.split("\\|")[1];
+                            genreObj.addProperty("id", genreObjId);
+                            genreObj.addProperty("name", genreObjName);
+                            genreList.add(genreObj);
+                        }
+                        // TODO: Limit to three
+                        rowJsonObject.add("genres", genreList);
+
+                        // TODO: Limit to three
+                        JsonArray starList = new JsonArray();
+                        for (String star : rowStarList.split(";")) {
+                            JsonObject starObj = new JsonObject();
+                            String starObjId = star.split("\\|")[0];
+                            String starObjName = star.split("\\|")[1];
+                            starObj.addProperty("id", starObjId);
+                            starObj.addProperty("name", starObjName);
+                            starList.add(starObj);
+                        }
+                        rowJsonObject.add("stars", starList);
+
                         result.add(rowJsonObject);
                     }
                     responseJsonObject.add("result", result);
                 }
                 response.setStatus(200);
             }
+
+            // Add numPages
 
             String countQuery = "SELECT COUNT(*) " +
                     "FROM `moviedb`.`movies` m " +
