@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS moviedb;
+DROP DATABASE IF EXISTS moviedb;
+CREATE DATABASE moviedb;
 
 USE moviedb;
 
@@ -63,7 +64,6 @@ CREATE TABLE sales (
     `customerId` INTEGER NOT NULL,
     `movieId` VARCHAR(10) NOT NULL,
     `saleDate` DATE NOT NULL,
-    `quantity` INTEGER NOT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customerId`) REFERENCES customers(`id`),
     FOREIGN KEY (`movieId`) REFERENCES movies(`id`)
@@ -78,7 +78,7 @@ CREATE TABLE ratings (
 
 
 -- Create Views --
--- CREATE movie_list --
+-- CREATE movie_list view --
 CREATE VIEW `moviedb`.`movie_list` AS
 SELECT `m`.`id`       AS `id`,
        `m`.`title`    AS `title`,
@@ -89,11 +89,11 @@ SELECT `m`.`id`       AS `id`,
        `s`.`id`       AS `starId`,
        `r`.`rating`   AS `rating`
 FROM (((((`moviedb`.`movies` `m`
-    JOIN `moviedb`.`genres_in_movies` `gm` ON ((`m`.`id` = `gm`.`movieId`)))
-    JOIN `moviedb`.`genres` `g` ON ((`gm`.`genreId` = `g`.`id`)))
-    JOIN `moviedb`.`ratings` `r` ON ((`m`.`id` = `r`.`movieId`)))
-    JOIN `moviedb`.`stars_in_movies` `sm` ON ((`m`.`id` = `sm`.`movieId`)))
-    JOIN `moviedb`.`stars` `s` ON ((`sm`.`starId` = `s`.`id`)))
+    LEFT JOIN `moviedb`.`genres_in_movies` `gm` ON ((`m`.`id` = `gm`.`movieId`)))
+    LEFT JOIN `moviedb`.`genres` `g` ON ((`gm`.`genreId` = `g`.`id`)))
+    LEFT JOIN `moviedb`.`ratings` `r` ON ((`m`.`id` = `r`.`movieId`)))
+    LEFT JOIN `moviedb`.`stars_in_movies` `sm` ON ((`m`.`id` = `sm`.`movieId`)))
+    LEFT JOIN `moviedb`.`stars` `s` ON ((`sm`.`starId` = `s`.`id`)))
 ORDER BY `r`.`rating` DESC;
 
 -- CREATE movie_rating --
@@ -105,7 +105,7 @@ FROM (`moviedb`.`movies` `m`
 WHERE (`m`.`id` = `r`.`movieId`)
 ORDER BY `r`.`rating` DESC;
 
--- CREATE star_list --
+-- CREATE star_list view --
 CREATE VIEW `moviedb`.`star_list` AS
 SELECT `s`.`id`        AS `id`,
        `s`.`name`      AS `name`,
@@ -146,3 +146,4 @@ FROM `moviedb`.`stars_in_movies` sm
          JOIN (SELECT sm2.`starId`, COUNT(*) AS `moviesPlayed` FROM `stars_in_movies` sm2 GROUP BY sm2.`starId`) mp
               ON sm.`starId` = mp.`starId`
 GROUP BY sm.`movieId`;
+
