@@ -60,7 +60,7 @@ public class MoviesServlet extends HttpServlet {
 
         int count, page, genreCount = 3, starCount = 3;
         Integer year, genreId;
-        String title, director, starName, sortBy;
+        String title, director, starName, sortBy, advanced;
         JsonObject responseJsonObject = new JsonObject();
 
         // Get request parameters
@@ -76,6 +76,7 @@ public class MoviesServlet extends HttpServlet {
                 director = search.getDirector();
                 genreId = search.getGenreId();
                 sortBy = search.getSortBy();
+                advanced = search.getAdvanced();
                 responseJsonObject.addProperty("count", count);
                 responseJsonObject.addProperty("page", page);
                 responseJsonObject.addProperty("year", year);
@@ -84,6 +85,7 @@ public class MoviesServlet extends HttpServlet {
                 responseJsonObject.addProperty("director", director);
                 responseJsonObject.addProperty("genreId", genreId);
                 responseJsonObject.addProperty("sortBy", REVERSE_ORDER_BY_MAP.get((sortBy)));
+                responseJsonObject.addProperty("advanced", advanced);
             } else {
                 String countStr = request.getParameter("count");
                 count = Integer.parseInt(countStr);
@@ -99,6 +101,9 @@ public class MoviesServlet extends HttpServlet {
                 genreId = genreStr.isEmpty() ? null : Integer.parseInt(genreStr);
                 String pageStr = request.getParameter("page");
                 page = pageStr.isEmpty() ? 1 : Integer.parseInt(pageStr);
+                String advancedOrNull = request.getParameter("advanced");
+                advanced = advancedOrNull.isEmpty() ? null : advancedOrNull;
+
 
                 String sortByStr = request.getParameter("sortBy");
                 if (sortByStr == null) {
@@ -110,7 +115,7 @@ public class MoviesServlet extends HttpServlet {
                 }
 
                 request.getSession().setAttribute("search", new Search(
-                        count, page, year, title, starName, director, genreId, sortBy
+                        count, page, year, title, starName, director, genreId, sortBy, advanced
                 ));
             }
         } catch (Exception e) {

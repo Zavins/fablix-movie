@@ -7,8 +7,9 @@ public class Search {
     private final String director;
     private final Integer genreId;
     private final String sortBy;
+    private final String advanced;
 
-    public Search(int count, int page, Integer year, String title, String starName, String director, Integer genreId, String sortBy) {
+    public Search(int count, int page, Integer year, String title, String starName, String director, Integer genreId, String sortBy, String advanced) {
         this.count = count;
         this.page = page;
         this.year = year;
@@ -17,6 +18,7 @@ public class Search {
         this.director = director;
         this.genreId = genreId;
         this.sortBy = sortBy;
+        this.advanced = advanced;
     }
 
     public Integer getYear() {
@@ -49,5 +51,9 @@ public class Search {
 
     public String getSortBy() {
         return sortBy;
+    }
+
+    public String getAdvanced() {
+        return advanced;
     }
 }
