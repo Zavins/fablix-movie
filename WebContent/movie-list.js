@@ -176,13 +176,13 @@ const updateSearchString = () => {
     params["year"] = year && advanceSearch ? year : ''
     params["page"] = 1
     params["advanced"] = advanceSearch
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
 
 const updatePageNum = (page) => {
     params["page"] = page
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
 
