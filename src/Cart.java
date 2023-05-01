@@ -30,9 +30,26 @@ public class Cart {
         }
     }
 
+    public void setQuantity(String id, int quantity) {
+        Integer curr = items.get(id);
+        if (curr != null) {
+            items.put(id, quantity);
+        }
+    }
+
+    public int count() {
+        int count = 0;
+        for (Map.Entry<String, Integer> item : items.entrySet()) {
+            count += item.getValue();
+        }
+        return count;
+    }
+
     public void delete(String id) {
         items.remove(id);
     }
 
-    public void deleteAll() { items.clear(); }
+    public void deleteAll() {
+        items.clear();
+    }
 }

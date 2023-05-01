@@ -170,9 +170,11 @@ None
   - price: float
 - total: float
 
-### PATCH /api/cart
+### POST /api/cart
 
 Increase or decrease the quantity of a cart item.
+
+Used Put not Patch because HttpServlet does not support Patch.
 
 **Request**
 
@@ -201,7 +203,7 @@ Delete a movie from shopping cart.
   - 200 - OK
   - ...
 
-### POST /api/cart
+### POST /api/cart/checkout
 
 Place order.
 
@@ -218,8 +220,10 @@ Place order.
 
 - (status code)
   - 200 - OK
+  - 402 - Payment Required (incorrect credit card)
 - sales: List[Object]
   - id: int
   - movieTitle: String
   - quantity: int
-- totalPrice: float
+  - subtotal: float
+- total: float
