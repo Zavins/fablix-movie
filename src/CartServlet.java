@@ -10,7 +10,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
 import java.util.Map;
 
 import static utils.Utils.getMovieTitle;
@@ -45,16 +45,18 @@ public class CartServlet extends HttpServlet {
             for (Map.Entry<String, Integer> item : cart.getItems().entrySet()) {
                 JsonObject itemJsonObject = new JsonObject();
                 itemJsonObject.addProperty("movieId", item.getKey());
-                itemJsonObject.addProperty("movieTitle", getMovieTitle(conn, item.getKey()));
+                itemJsonObject.addProperty("title", getMovieTitle(conn, item.getKey()));
                 itemJsonObject.addProperty("quantity", item.getValue());
                 itemJsonObject.addProperty("price", 10);
+                itemJsonObject.addProperty("total", 10 * item.getValue());
                 total += item.getValue() * 10;
                 result.add(itemJsonObject);
             }
             responseJsonObject.addProperty("total", total);
             responseJsonObject.add("result", result);
+            responseJsonObject.addProperty("count", cart.count());
             response.setStatus(200);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             response.setStatus(400);
             responseJsonObject.addProperty("message", e.getMessage());
             e.printStackTrace();
@@ -75,7 +77,11 @@ public class CartServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
 
         String changeStr = request.getParameter("change");
-        int change = Integer.parseInt(changeStr);
+        String quantityStr = request.getParameter("quantity");
+        int change = 0;
+        int quantity = 0;
+        if (changeStr != null) change = Integer.parseInt(changeStr);
+        if (quantityStr != null) quantity = Integer.parseInt(quantityStr);
         String movieId = request.getParameter("movieId");
 
         Cart cart = (Cart) request.getSession().getAttribute("cart");
@@ -91,9 +97,14 @@ public class CartServlet extends HttpServlet {
             cart.removeOne(movieId);
             response.setStatus(200);
         } else {
-            response.setStatus(400);
+            if (quantity > 0) {
+                cart.setQuantity(movieId, quantity);
+                response.setStatus(200);
+            } else {
+                response.setStatus(400);
+            }
         }
-
+        responseJsonObject.addProperty("count", cart.count());
         response.setContentType("application/json");
         response.getWriter().write(responseJsonObject.toString());
     }
@@ -109,6 +120,7 @@ public class CartServlet extends HttpServlet {
         Cart cart = (Cart) request.getSession().getAttribute("cart");
 
         cart.delete(movieId);
+        responseJsonObject.addProperty("count", cart.count());
         response.setStatus(200);
 
         response.setContentType("application/json");

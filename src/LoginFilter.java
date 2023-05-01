@@ -2,6 +2,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -53,6 +54,9 @@ public class LoginFilter implements Filter {
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
         allowedURIs.add("api/login");
+        allowedURIs.add("login.css");
+        allowedURIs.add("header.html");
+        allowedURIs.add("logo_transparent.png");
 //        allowedURIs.add("api/movies");
 //        allowedURIs.add("api/movie");
 //        allowedURIs.add("api/genres");

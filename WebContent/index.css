@@ -1,0 +1,82 @@
+body {
+    height: 100vh;
+}
+
+.cell-8-1 {
+    flex-basis: 16.66666%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    -webkit-box-flex: 0;
+    -webkit-tap-highlight-color: #0000;
+}
+
+.cell-7-1 {
+    flex-basis: 14.28571%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    -webkit-box-flex: 0;
+    -webkit-tap-highlight-color: #0000;
+}
+
+.cell-3-1 {
+    flex-basis: 33.33333%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    -webkit-box-flex: 0;
+    -webkit-tap-highlight-color: #0000;
+}
+
+.cell-7-1 a {
+    color: #00ffad;
+    aspect-ratio: 1;
+}
+
+.cell-3-1 a {
+    color: #ffde00;
+    aspect-ratio: 1;
+}
+
+.animate-cell:hover {
+    animation: genreAnimation 0.6s ease infinite;
+}
+
+
+@keyframes genreAnimation {
+    0% {
+        transform: translateX(2px) rotate(0);
+    }
+    33% {
+        transform: translateY(2px) rotate(2deg);
+    }
+    66% {
+        transform: translateX(-2px) rotate(-2deg);
+    }
+    0%, 100% {
+        transform: translateY(-2px) rotate(0deg);
+    }
+}
+
+
+.animate-character {
+    text-transform: uppercase;
+    background-image: linear-gradient(
+            -225deg,
+            #5fffce 0%,
+            #2a98c0 29%,
+            #ff1361 67%,
+            #fff800 100%
+    );
+    background-size: 200% auto;
+    color: #fff;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-clip 5s linear infinite;
+    font-weight: normal;
+}
+
+@keyframes text-clip {
+    to {
+        background-position: 200% center;
+    }
+}
