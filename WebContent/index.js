@@ -25,7 +25,7 @@ const browseByGenres = () => {
         success: (genres) => {
             $("#browse-genres").html(
                 genres["result"].map((genre) => {
-                    let button = `<a role="button" class='btn btn-secondary' href='/movie-list.html?genre=${genre["id"]}'>
+                    let button = `<a role="button" class='btn btn-secondary' href='movie-list.html?genre=${genre["id"]}'>
                     ${genre["name"]}
                     </a>`
                     return "<div class='col cell-8-1 animate-cell'>" + button + "</div>"
@@ -41,7 +41,7 @@ const browseBySubstrings = () => {
     $("#browse-letters").html(
         LETTERS.map((text) => {
             let params = {title: text === "*" ? "%" : `${text}%`}
-            let button = `<a role='button' href='/movie-list.html?${new URLSearchParams(params).toString()}'
+            let button = `<a role='button' href='movie-list.html?${new URLSearchParams(params).toString()}'
             class='btn btn-secondary' aria-label='${text}'>${text}</a>`
 
             if (text === " ") button = ""
@@ -52,7 +52,7 @@ const browseBySubstrings = () => {
     $("#browse-numbers").html(
         NUMBERS.map((text) => {
             let params = {title: `${text}%`}
-            let button = `<a role='button' href='/movie-list.html?${new URLSearchParams(params).toString()}'
+            let button = `<a role='button' href='movie-list.html?${new URLSearchParams(params).toString()}'
             class='btn btn-secondary' aria-label='${text}'>${text}</a>`
 
             if (text === " ") button = ""
@@ -104,7 +104,7 @@ $("#search-form").on("submit", function (e) {
         advanced: advanceSearch,
     }
 
-    location.href = "/movie-list.html?" + new URLSearchParams(params).toString();
+    location.href = "movie-list.html?" + new URLSearchParams(params).toString();
 })
 
 
