@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Map;
 
 @WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
@@ -140,6 +141,34 @@ public class MoviesServlet extends HttpServlet {
                 }
                 response.setStatus(200);
             }
+
+            String countQuery = "SELECT COUNT(*) " +
+                    "FROM `moviedb`.`movies` m " +
+                    "JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
+                    "WHERE " +
+                    "(? OR m.`id` IN (SELECT gm.`movieId` FROM `moviedb`.`genres_in_movies` gm WHERE gm.`genreId` = ?))" +
+                    "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` = ?)) " +
+                    "AND (? OR m.`title` LIKE ?) " +
+                    "AND (? OR m.`director` LIKE ?) " +
+                    "AND (? OR m.`year` = ?) ";
+
+            try (PreparedStatement statement = conn.prepareStatement(countQuery)) {
+                statement.setBoolean(1, genreId == null);
+                statement.setInt(2, genreId == null ? 0 : genreId);
+                statement.setBoolean(3, starName == null);
+                statement.setString(4, starName == null ? "" : starName);
+                statement.setBoolean(5, title == null);
+                statement.setString(6, title == null ? "" : title);
+                statement.setBoolean(7, director == null);
+                statement.setString(8, director == null ? "" : title);
+                statement.setBoolean(9, year == null);
+                statement.setInt(10, year == null ? 0 : year);
+                try (ResultSet rs = statement.executeQuery()) {
+                    rs.next();
+                    responseJsonObject.addProperty("numPages", rs.getInt(1) / count + 1);
+                }
+            }
+
         } catch (Exception e) {
             response.setStatus(500);
             responseJsonObject.addProperty("message", e.getMessage());
