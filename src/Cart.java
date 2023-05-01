@@ -33,4 +33,6 @@ public class Cart {
     public void delete(String id) {
         items.remove(id);
     }
+
+    public void deleteAll() { items.clear(); }
 }
