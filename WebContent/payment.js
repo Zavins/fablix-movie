@@ -35,6 +35,7 @@ $("#payment-form").submit(function (e) {
                         </tr>
                     `)
                 });
+                $("#confirmation-total").text(`$${resultData["total"].toFixed(2)}`)
             });
         },
         error: (message) => {
