@@ -50,16 +50,16 @@ public class LoginServlet extends HttpServlet {
     }
 
     // Check if password is correct given the username (email)
-    private boolean checkPassword(Connection conn, String username, String password) throws SQLException {
+    private Integer getUserId(Connection conn, String username, String password) throws SQLException {
         // Check if email (username) exists
-        String query = "SELECT EXISTS(SELECT * FROM `customers` WHERE `email` = ? AND `password` = ?)";
+        String query = "SELECT `id` FROM `customers` WHERE `email` = ? AND `password` = ?";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
             statement.setString(2, password);
             try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
-                rs.next();
-                return rs.getBoolean(1);
+                boolean hasUser = rs.next();
+                return hasUser? rs.getInt(1) : null;
             }
         }
     }
@@ -75,9 +75,10 @@ public class LoginServlet extends HttpServlet {
 
         try (Connection conn = dataSource.getConnection()) {
             if (checkUsername(conn, username)) {
-                if (checkPassword(conn, username, password)) {
+                Integer userId = getUserId(conn, username, password);
+                if (userId != null) {
                     response.setStatus(200);
-                    request.getSession().setAttribute("user", new User(username));
+                    request.getSession().setAttribute("user", new User(userId, username));
                 } else {
                     response.setStatus(401);
                     responseJsonObject.addProperty("message", "incorrect password");
