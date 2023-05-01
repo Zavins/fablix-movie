@@ -71,7 +71,7 @@ const fetchResult = () => {
         method: "GET",
         url: "api/movies",
         data: params,
-        success: (resultData, textStatus, xhr) => {
+        success: (resultData) => {
             handleMovieListResult(resultData["result"])
             setPagination(resultData["numPages"])
         },
@@ -90,7 +90,7 @@ const fetchPreviousResult = () => {
         method: "GET",
         url: "api/movies",
         data: {"usePrevious": 1},
-        success: (resultData, textStatus, xhr) => {
+        success: (resultData) => {
             handleMovieListResult(resultData["result"])
             setPagination(resultData["numPages"])
             uesPreviousParams(resultData)
@@ -127,7 +127,7 @@ const setPagination = (pageCount) => {
         ${
             pageNumbers.map((page) => {
                 let active = ""
-                if (page + 1 == currentPage) active = "active"
+                if (page + 1 === currentPage) active = "active"
                 return "<li class='" + `page-item ${active}` + "'>" +
                     "<a class='page-link bg-dark border-secondary' href='#'>" + (page + 1).toString() + "</a>" +
                     "</li>"
@@ -155,7 +155,7 @@ const updateSortAndCount = () => {
     params["count"] = count
     params["sortBy"] = sort[0] + order[0] + sort[1] + order[1]
     params["page"] = 1
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
 
@@ -176,13 +176,13 @@ const updateSearchString = () => {
     params["year"] = year && advanceSearch ? year : ''
     params["page"] = 1
     params["advanced"] = advanceSearch
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
 
 const updatePageNum = (page) => {
     params["page"] = page
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
 
@@ -217,7 +217,7 @@ const uesPreviousParams = (resultData) => {
     paramMap.set("advanced", resultData["advanced"] ?? "")
     paramMap.set("usePrevious", 0)
     params = prepareParams(paramMap)
-    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fillInSearchParams()
     fillInSortAndCount(resultData["sortBy"], resultData["count"])
 }
