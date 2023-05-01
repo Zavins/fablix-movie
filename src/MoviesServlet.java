@@ -10,8 +10,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Map;
 
 @WebServlet(name = "MoviesServlet", urlPatterns = "/api/movies")
@@ -89,11 +90,11 @@ public class MoviesServlet extends HttpServlet {
                 String yearStr = request.getParameter("year");
                 year = yearStr.isEmpty() ? null : Integer.parseInt(yearStr);
                 String titleOrNull = request.getParameter("title");
-                title = titleOrNull.isEmpty() ? null : URLDecoder.decode(titleOrNull, "UTF-8");
+                title = titleOrNull.isEmpty() ? null : titleOrNull;
                 String directorOrNull = request.getParameter("director");
-                director = directorOrNull.isEmpty() ? null : URLDecoder.decode(directorOrNull, "UTF-8");
+                director = directorOrNull.isEmpty() ? null : directorOrNull;
                 String starOrNull = request.getParameter("starName");
-                starName = starOrNull.isEmpty() ? null : URLDecoder.decode(starOrNull, "UTF-8");
+                starName = starOrNull.isEmpty() ? null : starOrNull;
                 String genreStr = request.getParameter("genre");
                 genreId = genreStr.isEmpty() ? null : Integer.parseInt(genreStr);
                 String pageStr = request.getParameter("page");

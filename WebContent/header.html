@@ -1,11 +1,49 @@
-<header class="d-flex align-items-center py-3 px-3 mb-4 border-bottom"
+<header class="d-flex justify-content-between align-items-center py-2 px-3 mb-4 z-3 shadow"
         style="
-            background: rgb(117,195,34);
-            background: linear-gradient(90deg, rgba(117,195,34,1) 0%, rgba(253,187,45,1) 100%);
+            background: linear-gradient(50deg, #203e3b 0%, #2ba0cc 100%);
+            position: fixed;
+            left: 0;
+            top:0;
+            right: 0;
+            height: 60px;
         "
 >
-    <h4 class="text-black">Fablix</h4>
-    <ul class="nav">
-        <li><a href="movie-list.html" class="nav-link">Movie List</a></li>
-    </ul>
+    <a href="index.html">
+        <img class="d-block" src="assets/logo_transparent.png" alt="Logo" width="120" height="50"/>
+    </a>
+    <a type="button"
+       id="cart-header-button"
+       aria-label="Shopping cart"
+       href="shopping-cart.html"
+       class="btn btn-dark p-1 bg-transparent  d-flex flex-column align-items-center justify-content-center"
+       style="border-radius:100px; height:48px; aspect-ratio: 1; border: 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-cart"
+             viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+        <span class="font-weight-bold" style="position: absolute; font-size: 11px;">0</span>
+    </a>
 </header>
+<!--placeholder-->
+<div style="height: 60px">
+    <style>
+        .cart-add-item {
+            animation: cart-animation 0.2s ease infinite;
+        }
+
+        @keyframes cart-animation {
+            0% {
+                transform: translateX(4px) rotate(0);
+            }
+            33% {
+                transform: translateY(4px) rotate(3deg);
+            }
+            66% {
+                transform: translateX(-1px) rotate(-3deg);
+            }
+            0%, 100% {
+                transform: translateY(-1px) rotate(0deg);
+            }
+        }
+    </style>
+</div>
