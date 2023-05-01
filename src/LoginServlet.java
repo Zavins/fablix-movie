@@ -43,7 +43,7 @@ public class LoginServlet extends HttpServlet {
             statement.setString(1, username);
             try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
-                rs.first();
+                rs.next();
                 return rs.getBoolean(1);
             }
         }
