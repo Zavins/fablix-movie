@@ -45,39 +45,72 @@ public class MoviesServlet extends HttpServlet {
                 "default", "rating DESC"
         );
 
-        int count, page, genreCount, starCount;
+        final Map<String, String> REVERSE_ORDER_BY_MAP = Map.of(
+                "title ASC, rating ASC", "tara",
+                "title ASC, rating DESC", "tard",
+                "title DESC, rating ASC", "tdra",
+                "title DESC, rating DESC", "tdrd",
+                "rating ASC, title ASC", "rata",
+                "rating ASC, title DESC", "ratd",
+                "rating DESC, title ASC", "rdta",
+                "rating DESC, title DESC", "rdtd",
+                "rating DESC", "default"
+        );
+
+        int count, page, genreCount = 3, starCount = 3;
         Integer year, genreId;
         String title, director, starName, sortBy;
         JsonObject responseJsonObject = new JsonObject();
 
         // Get request parameters
         try {
-            // TODO: Check if all parameter empty
-            String countStr = request.getParameter("count");
-            count = Integer.parseInt(countStr);
-            String yearStr = request.getParameter("year");
-            year = yearStr.isEmpty() ? null : Integer.parseInt(yearStr);
-            String titleOrNull = request.getParameter("title");
-            title = titleOrNull.isEmpty() ? null : URLDecoder.decode(titleOrNull, "UTF-8");
-            String directorOrNull = request.getParameter("director");
-            director = directorOrNull.isEmpty() ? null : URLDecoder.decode(directorOrNull, "UTF-8");
-            String starOrNull = request.getParameter("starName");
-            starName = starOrNull.isEmpty() ? null : URLDecoder.decode(starOrNull, "UTF-8");
-            String genreStr = request.getParameter("genre");
-            genreId = genreStr == null ? null : Integer.parseInt(genreStr);
-            String pageStr = request.getParameter("page");
-            page = pageStr == null ? 1 : Integer.parseInt(pageStr);
-            // Use default. Not implemented.
-            genreCount = 3;
-            starCount = 3;
+            String usePrevious = request.getParameter("usePrevious");
+            if (usePrevious.equals("1")) {
+                Search search = (Search) request.getSession().getAttribute("search");
+                count = search.getCount();
+                page = search.getPage();
+                year = search.getYear();
+                title = search.getTitle();
+                starName = search.getStarName();
+                director = search.getDirector();
+                genreId = search.getGenreId();
+                sortBy = search.getSortBy();
+                responseJsonObject.addProperty("count", count);
+                responseJsonObject.addProperty("page", page);
+                responseJsonObject.addProperty("year", year);
+                responseJsonObject.addProperty("title", title);
+                responseJsonObject.addProperty("starName", starName);
+                responseJsonObject.addProperty("director", director);
+                responseJsonObject.addProperty("genreId", genreId);
+                responseJsonObject.addProperty("sortBy", REVERSE_ORDER_BY_MAP.get((sortBy)));
+            } else {
+                String countStr = request.getParameter("count");
+                count = Integer.parseInt(countStr);
+                String yearStr = request.getParameter("year");
+                year = yearStr.isEmpty() ? null : Integer.parseInt(yearStr);
+                String titleOrNull = request.getParameter("title");
+                title = titleOrNull.isEmpty() ? null : URLDecoder.decode(titleOrNull, "UTF-8");
+                String directorOrNull = request.getParameter("director");
+                director = directorOrNull.isEmpty() ? null : URLDecoder.decode(directorOrNull, "UTF-8");
+                String starOrNull = request.getParameter("starName");
+                starName = starOrNull.isEmpty() ? null : URLDecoder.decode(starOrNull, "UTF-8");
+                String genreStr = request.getParameter("genre");
+                genreId = genreStr == null ? null : Integer.parseInt(genreStr);
+                String pageStr = request.getParameter("page");
+                page = pageStr == null ? 1 : Integer.parseInt(pageStr);
 
-            String sortByStr = request.getParameter("sortBy");
-            if (sortByStr == null) {
-                sortByStr = "default";
-            }
-            sortBy = ORDER_BY_MAP.get(sortByStr);
-            if (sortBy == null) {
-                throw new RuntimeException("sortBy value not supported");
+                String sortByStr = request.getParameter("sortBy");
+                if (sortByStr == null) {
+                    sortByStr = "default";
+                }
+                sortBy = ORDER_BY_MAP.get(sortByStr);
+                if (sortBy == null) {
+                    throw new RuntimeException("sortBy value not supported");
+                }
+
+                request.getSession().setAttribute("search", new Search(
+                        count, page, year, title, starName, director, genreId, sortBy
+                ));
             }
         } catch (Exception e) {
             response.setStatus(400);
