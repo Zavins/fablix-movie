@@ -42,7 +42,11 @@ function handleResult(resultData) {
     $("#movie-info-title").text(resultData["title"]);
     $("#movie-info-director").text(resultData["director"]);
     $("#movie-info-year").text(resultData["year"]);
-    $("#movie-info-genres").text(resultData["genres"]);
+    $("#movie-info-genres").html(
+        resultData["genres"].map(
+            (genre) => `<a href="index.html?genre=${genre['id']}">${genre['name']}</a>`
+        ).join(", ")
+    );
     $("#movie-info-rating").text(resultData["rating"]);
     $("#movie-info-stars").html(
         resultData["stars"].map(
@@ -91,6 +95,6 @@ let movieId = getParameterByName('id');
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-movie?id=" + movieId,
+    url: "api/movie?id=" + movieId,
     success: (resultData) => handleResult(resultData)
 });
