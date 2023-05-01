@@ -46,4 +46,21 @@
             }
         }
     </style>
+    <script>
+        const updateCartCount = () => {
+            jQuery.ajax({
+                dataType: "json",
+                method: "GET",
+                url: "api/cart",
+                success: (resultData) => {
+                    $("#cart-header-button").find('span').html(resultData["count"])
+                }
+            });
+        }
+        if (!location.href.endsWith("login.html")) {
+            updateCartCount()
+        } else {
+            $("#cart-header-button").detach()
+        }
+    </script>
 </div>
