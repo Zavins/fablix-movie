@@ -116,6 +116,23 @@ public class CartServlet extends HttpServlet {
         response.getWriter().write(responseJsonObject.toString());
     }
 
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
+        JsonObject responseJsonObject = new JsonObject();
+
+        String movieId = request.getParameter("movieId");
+
+        Cart cart = (Cart) request.getSession().getAttribute("cart");
+
+        cart.delete(movieId);
+        response.setStatus(200);
+
+        response.setContentType("application/json");
+        response.getWriter().write(responseJsonObject.toString());
+    }
+
     //    /**
 //     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 //     */
