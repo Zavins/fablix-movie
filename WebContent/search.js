@@ -14,16 +14,20 @@ const showAdvanceSearch = () => {
 
 var advanceSearch = false
 
+const fillInSearchParams = () => {
+    let searchParams = new URLSearchParams(window.location.search)
+    $("#title").attr('value', (searchParams.get("title") ?? "").replaceAll("%", ""))
+    $("#director").attr('value', (searchParams.get("director") ?? "").replaceAll("%", ""))
+    $("#star").attr('value', (searchParams.get("starName") ?? "").replaceAll("%", ""))
+    $("#year").attr('value', searchParams.get("year"))
+    if (searchParams.get("advanced") === "true") {
+        var advanceSearch = false
+        showAdvanceSearch()
+    }
+}
+
 $(document).ready(function () {
     setTimeout(function () {
-        let searchParams = new URLSearchParams(window.location.search)
-        $("#title").attr('value', (searchParams.get("title") ?? "").replaceAll("%", ""))
-        $("#director").attr('value', (searchParams.get("director") ?? "").replaceAll("%", ""))
-        $("#star").attr('value', (searchParams.get("starName") ?? "").replaceAll("%", ""))
-        $("#year").attr('value', searchParams.get("year"))
-        if (searchParams.get("advanced") === "true") {
-            var advanceSearch = false
-            showAdvanceSearch()
-        }
+        fillInSearchParams()
     }, 500)
 });
