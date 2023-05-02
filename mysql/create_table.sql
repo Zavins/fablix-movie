@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS moviedb;
+DROP DATABASE IF EXISTS moviedb;
+CREATE DATABASE moviedb;
 
 USE moviedb;
 
