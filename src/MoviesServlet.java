@@ -214,10 +214,9 @@ public class MoviesServlet extends HttpServlet {
 
             String countQuery = "SELECT COUNT(*) " +
                     "FROM `moviedb`.`movies` m " +
-                    "JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
                     "WHERE " +
                     "(? OR m.`id` IN (SELECT gm.`movieId` FROM `moviedb`.`genres_in_movies` gm WHERE gm.`genreId` = ?))" +
-                    "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` = ?)) " +
+                    "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` LIKE ?)) " +
                     "AND (? OR m.`title` LIKE ?) " +
                     "AND (? OR m.`director` LIKE ?) " +
                     "AND (? OR m.`year` = ?) ";
