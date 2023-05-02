@@ -44,7 +44,7 @@ function handleResult(resultData) {
     $("#star-info-name").text(resultData["name"]);
     $("#star-info-birth-year").text(resultData["birthYear"] !== 0 ? resultData["birthYear"] : "N/A");
 
-    console.log("handleResult: populating movie table from resultData");
+    // console.log("handleResult: populating movie table from resultData");
 
     // Populate the star table
     // Find the empty table body by id "movie_table_body"
@@ -78,6 +78,6 @@ let starId = getParameterByName('id');
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-star?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/star?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

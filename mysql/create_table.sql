@@ -1,4 +1,5 @@
-CREATE DATABASE IF NOT EXISTS moviedb;
+DROP DATABASE IF EXISTS moviedb;
+CREATE DATABASE moviedb;
 
 USE moviedb;
 
@@ -77,7 +78,7 @@ CREATE TABLE ratings (
 
 
 -- Create Views --
--- CREATE movie_list --
+-- CREATE movie_list view --
 CREATE VIEW `moviedb`.`movie_list` AS
 SELECT `m`.`id`       AS `id`,
        `m`.`title`    AS `title`,
@@ -88,11 +89,11 @@ SELECT `m`.`id`       AS `id`,
        `s`.`id`       AS `starId`,
        `r`.`rating`   AS `rating`
 FROM (((((`moviedb`.`movies` `m`
-    JOIN `moviedb`.`genres_in_movies` `gm` ON ((`m`.`id` = `gm`.`movieId`)))
-    JOIN `moviedb`.`genres` `g` ON ((`gm`.`genreId` = `g`.`id`)))
-    JOIN `moviedb`.`ratings` `r` ON ((`m`.`id` = `r`.`movieId`)))
-    JOIN `moviedb`.`stars_in_movies` `sm` ON ((`m`.`id` = `sm`.`movieId`)))
-    JOIN `moviedb`.`stars` `s` ON ((`sm`.`starId` = `s`.`id`)))
+    LEFT JOIN `moviedb`.`genres_in_movies` `gm` ON ((`m`.`id` = `gm`.`movieId`)))
+    LEFT JOIN `moviedb`.`genres` `g` ON ((`gm`.`genreId` = `g`.`id`)))
+    LEFT JOIN `moviedb`.`ratings` `r` ON ((`m`.`id` = `r`.`movieId`)))
+    LEFT JOIN `moviedb`.`stars_in_movies` `sm` ON ((`m`.`id` = `sm`.`movieId`)))
+    LEFT JOIN `moviedb`.`stars` `s` ON ((`sm`.`starId` = `s`.`id`)))
 ORDER BY `r`.`rating` DESC;
 
 -- CREATE movie_rating --
@@ -104,7 +105,7 @@ FROM (`moviedb`.`movies` `m`
 WHERE (`m`.`id` = `r`.`movieId`)
 ORDER BY `r`.`rating` DESC;
 
--- CREATE star_list --
+-- CREATE star_list view --
 CREATE VIEW `moviedb`.`star_list` AS
 SELECT `s`.`id`        AS `id`,
        `s`.`name`      AS `name`,
@@ -119,3 +120,30 @@ FROM ((`moviedb`.`stars` `s`
 WHERE ((`m`.`id` = `sm`.`movieId`)
     AND (`s`.`id` = `sm`.`starId`))
 ORDER BY `s`.`id`;
+
+-- Create movie_genre_list_view
+CREATE VIEW `moviedb`.`movie_genre_list_view` AS
+SELECT gm.`movieId`,
+       GROUP_CONCAT(
+               g.`id`, '|', g.`name`
+               ORDER BY g.`name` ASC
+               SEPARATOR ';'
+           ) AS `genreList`
+FROM `moviedb`.`genres_in_movies` gm
+         JOIN `moviedb`.`genres` g ON gm.`genreId` = g.`id`
+GROUP BY gm.`movieId`;
+
+-- Create movie_star_list_view
+CREATE VIEW `moviedb`.`movie_star_list_view` AS
+SELECT sm.`movieId`,
+       GROUP_CONCAT(
+               s.`id`, '|', s.`name`
+               ORDER BY mp.`moviesPlayed` DESC, s.`name`
+               SEPARATOR ';'
+           ) AS `starList`
+FROM `moviedb`.`stars_in_movies` sm
+         JOIN `moviedb`.`stars` s ON sm.`starId` = s.`id`
+         JOIN (SELECT sm2.`starId`, COUNT(*) AS `moviesPlayed` FROM `stars_in_movies` sm2 GROUP BY sm2.`starId`) mp
+              ON sm.`starId` = mp.`starId`
+GROUP BY sm.`movieId`;
+
