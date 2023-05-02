@@ -119,7 +119,7 @@ const setPagination = (pageCount) => {
     if (currentPage <= 1) {
         disablePrev = "disabled text-secondary"
     }
-    if (currentPage >= pageCount - 1) {
+    if (currentPage >= pageCount) {
         disableNext = "disabled text-secondary"
     }
     $("#pagination").html(
@@ -172,7 +172,7 @@ const updateSearchString = () => {
     let year = $("#year").val()
     params["title"] = title ? `%${title}%` : '%'
     params["director"] = director && advanceSearch ? `%${director}%` : ''
-    params["starName"] = director && advanceSearch ? `%${starName}%` : ''
+    params["starName"] = starName && advanceSearch ? `%${starName}%` : ''
     params["year"] = year && advanceSearch ? year : ''
     params["page"] = 1
     params["advanced"] = advanceSearch
@@ -194,7 +194,7 @@ const prepareParams = (params) => {
         title: params.get("title") ?? "%",
         year: params.get("year") ?? "",
         director: params.get("director") ?? "",
-        starName: params.get("director") ?? "",
+        starName: params.get("starName") ?? "",
         genre: params.get("genre") ?? "",
         page: params.get("page") ?? 1,
         sortBy: params.get("sortBy") ?? "rdta",

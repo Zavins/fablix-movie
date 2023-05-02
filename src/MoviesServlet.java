@@ -92,11 +92,11 @@ public class MoviesServlet extends HttpServlet {
                 String yearStr = request.getParameter("year");
                 year = yearStr.isEmpty() ? null : Integer.parseInt(yearStr);
                 String titleOrNull = request.getParameter("title");
-                title = titleOrNull.isEmpty() ? null : titleOrNull;
+                title = titleOrNull.isEmpty() ? null : String.join("", request.getParameterValues("title"));
                 String directorOrNull = request.getParameter("director");
-                director = directorOrNull.isEmpty() ? null : directorOrNull;
+                director = directorOrNull.isEmpty() ? null : String.join("", request.getParameterValues("director"));
                 String starOrNull = request.getParameter("starName");
-                starName = starOrNull.isEmpty() ? null : starOrNull;
+                starName = starOrNull.isEmpty() ? null : String.join("", request.getParameterValues("starName"));
                 String genreStr = request.getParameter("genre");
                 genreId = genreStr.isEmpty() ? null : Integer.parseInt(genreStr);
                 String pageStr = request.getParameter("page");
@@ -132,12 +132,12 @@ public class MoviesServlet extends HttpServlet {
             String query =
                     "SELECT m.`id`, m.`title`, m.`year`, m.`director`, r.`rating`, mglv.`genreList`, mslv.`starList` " +
                             "FROM `moviedb`.`movies` m " +
-                            "JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
-                            "JOIN `moviedb`.`movie_star_list_view` mslv ON m.`id` = mslv.`movieId` " +
-                            "JOIN `moviedb`.`movie_genre_list_view` mglv ON m.`id` = mglv.`movieId` " +
+                            "LEFT JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
+                            "LEFT JOIN `moviedb`.`movie_star_list_view` mslv ON m.`id` = mslv.`movieId` " +
+                            "LEFT JOIN `moviedb`.`movie_genre_list_view` mglv ON m.`id` = mglv.`movieId` " +
                             "WHERE " +
                             "(? OR m.`id` IN (SELECT gm.`movieId` FROM `moviedb`.`genres_in_movies` gm WHERE gm.`genreId` = ?))" +
-                            "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` = ?)) " +
+                            "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` LIKE ?)) " +
                             "AND (? OR m.`title` LIKE ?) " +
                             "AND (? OR m.`director` LIKE ?) " +
                             "AND (? OR m.`year` = ?) " +
@@ -152,11 +152,12 @@ public class MoviesServlet extends HttpServlet {
                 statement.setBoolean(5, title == null);
                 statement.setString(6, title == null ? "" : title);
                 statement.setBoolean(7, director == null);
-                statement.setString(8, director == null ? "" : title);
+                statement.setString(8, director == null ? "" : director);
                 statement.setBoolean(9, year == null);
                 statement.setInt(10, year == null ? 0 : year);
                 statement.setInt(11, (page - 1) * count); // offset
                 statement.setInt(12, count); // limit
+//                System.out.println(statement.toString());
                 try (ResultSet rs = statement.executeQuery()) {
                     JsonArray result = new JsonArray();
                     while (rs.next()) {
