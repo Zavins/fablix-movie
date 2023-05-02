@@ -94,9 +94,17 @@ const updateCart = () => {
             handleCartResult(resultData["result"])
             $("#total").html(`$${resultData["total"].toFixed(2)}`)
             $("#cart-header-button").find('span').html(resultData["count"])
+            if (resultData["total"] > 0) hasItem = true;
         }
     });
 }
+
+var hasItem = false;
+
+// Redirect only if shopping cart not empty
+$("#btn-payment").on("click", e => {
+    if (hasItem) location.href = "payment.html";
+})
 
 // Load common header and footer
 $("#header").load("header.html");
