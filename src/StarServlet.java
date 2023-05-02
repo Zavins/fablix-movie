@@ -26,7 +26,7 @@ public class StarServlet extends HttpServlet {
 
     private JsonArray getMovies(Connection conn, String starId) throws SQLException {
         @SuppressWarnings("SqlAggregates") String query =
-                "SELECT m.`id`, m.`title`\n" +
+                "SELECT m.`id`, m.`title`, m.`year`, m.`director`\n" +
                 "FROM `moviedb`.`stars_in_movies` sm\n" +
                 "JOIN `moviedb`.`movies` m ON m.`id` = sm.`movieId`\n" +
                 "WHERE sm.`starId` = ?\n" +
@@ -42,6 +42,8 @@ public class StarServlet extends HttpServlet {
                     JsonObject rowJsonObject = new JsonObject();
                     rowJsonObject.addProperty("id", rs.getString("id"));
                     rowJsonObject.addProperty("title", rs.getString("title"));
+                    rowJsonObject.addProperty("year", rs.getString("year"));
+                    rowJsonObject.addProperty("director", rs.getString("director"));
                     result.add(rowJsonObject);
                 }
             }
