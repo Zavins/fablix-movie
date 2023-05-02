@@ -1,44 +1,4 @@
-/**
- * Handles the data returned by the API, read the jsonObject and populate data into html elements
- * @param resultData jsonObject
- */
-function handleMovieListResult(resultData) {
-    // Populate the star table
-    // Find the empty table body by id "star_table_body"
-    resultData = resultData["result"]
-    let html = ""
-    // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < resultData.length; i++) {
-
-        // Concatenate the html tags with resultData jsonObject
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML += "<td>" + `<a href="single-movie.html?id=${resultData[i]['id']}">${resultData[i]['title']}</a>` + "</td>"; //Title
-        rowHTML += "<td>" + resultData[i]["year"] + "</td>"; //Year
-        rowHTML += "<td>" + resultData[i]["director"] + "</td>"; //Director
-        rowHTML += `<td>${resultData[i]["genres"].map(
-            (genre) => `<a href="movie-list.html?genre=${genre['id']}">${genre['name']}</a>`
-        ).join(", ")}</td>`; //Genres
-        rowHTML += `<td>${resultData[i]["stars"].map(
-            (star) => `<a href="single-star.html?id=${star['id']}">${star['name']}</a>`
-        ).join(", ")}</td>`; //Stars
-        rowHTML += "<td>" + resultData[i]["rating"] + "</td>"; //Rating
-        rowHTML += "<td>" +
-            `<div class='d-flex justify-content-end align-items-center gap-2'>
-            $10.00
-            <button class='btn btn-success cart' value='${resultData[i]['id']}'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
-                  <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
-                  <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-                </svg>
-            </button>
-            </div>` +
-            "</td>"; //Price
-        rowHTML += "</tr>";
-        html += rowHTML
-        // Append the row created to the table body, which will refresh the page
-    }
-    $("#movie_list_table_body").html(html);
+const addCartHandler = () => {
     $(".cart").on("click", (e) => {
         jQuery.ajax({
             dataType: "json",
@@ -62,6 +22,85 @@ function handleMovieListResult(resultData) {
             },
         });
     })
+}
+
+function handleMovieListResult(result) {
+    // Populate the star table
+    // Find the empty table body by id "star_table_body"
+
+    let html = ""
+    // Iterate through resultData, no more than 10 entries
+    for (let i = 0; i < result.length; i++) {
+
+        // Concatenate the html tags with resultData jsonObject
+        let rowHTML = "";
+        rowHTML += "<tr>";
+        rowHTML += "<td>" + `<a href="single-movie.html?id=${result[i]['id']}">${result[i]['title']}</a>` + "</td>"; //Title
+        rowHTML += "<td>" + result[i]["year"] + "</td>"; //Year
+        rowHTML += "<td>" + result[i]["director"] + "</td>"; //Director
+        rowHTML += `<td>${result[i]["genres"].map(
+            (genre) => `<a href="movie-list.html?genre=${genre['id']}">${genre['name']}</a>`
+        ).join(", ")}</td>`; //Genres
+        rowHTML += `<td>${result[i]["stars"].map(
+            (star) => `<a href="single-star.html?id=${star['id']}">${star['name']}</a>`
+        ).join(", ")}</td>`; //Stars
+        rowHTML += "<td>" + result[i]["rating"] + "</td>"; //Rating
+        rowHTML += "<td>" +
+            `<div class='d-flex justify-content-end align-items-center gap-2'>
+            $10.00
+            <button class='btn btn-success cart' value='${result[i]['id']}'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
+                  <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
+                  <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                </svg>
+            </button>
+            </div>` +
+            "</td>"; //Price
+        rowHTML += "</tr>";
+        html += rowHTML
+        // Append the row created to the table body, which will refresh the page
+    }
+    $("#movie_list_table_body").html(html);
+    addCartHandler()
+}
+
+const fetchResult = () => {
+    $("#movie_list_table_body").html("")
+    jQuery.ajax({
+        dataType: "json",
+        method: "GET",
+        url: "api/movies",
+        data: params,
+        success: (resultData, textStatus, xhr) => {
+            handleMovieListResult(resultData["result"])
+            setPagination(resultData["numPages"])
+        },
+        complete: (e, status) => {
+            if (status === "parsererror" && !location.href.endsWith("login.html")) {
+                location.reload();
+            }
+        },
+    });
+}
+
+const fetchPreviousResult = () => {
+    $("#movie_list_table_body").html("")
+    jQuery.ajax({
+        dataType: "json",
+        method: "GET",
+        url: "api/movies",
+        data: {"usePrevious": 1},
+        success: (resultData, textStatus, xhr) => {
+            handleMovieListResult(resultData["result"])
+            setPagination(resultData["numPages"])
+            uesPreviousParams(resultData)
+        },
+        complete: (e, status) => {
+            if (status === "parsererror" && !location.href.endsWith("login.html")) {
+                location.reload();
+            }
+        },
+    });
 }
 
 const setPagination = (pageCount) => {
@@ -103,68 +142,11 @@ const setPagination = (pageCount) => {
         } else if (page === "Next") {
             page = currentPage + 1
         }
-        updatePage(page)
+        updatePageNum(page)
         setPagination(pageCount)
     })
 }
 
-$("#advance-search-button").on("click", (e) => {
-    console.log("advance search")
-    e.preventDefault()
-    if (e.target.innerHTML === "Advance search") {
-        showAdvanceSearch()
-        e.target.innerHTML = "Hide advance Search"
-    } else {
-        showAdvanceSearch()
-        e.target.innerHTML = "Advance search"
-    }
-})
-
-
-const prepareParams = (params) => {
-    return {
-        usePrevious: params.get("usePrevious") ?? "0",
-        count: params.get("count") ?? 25,
-        title: params.get("title") ?? "%",
-        year: params.get("year") ?? "",
-        director: params.get("director") ?? "",
-        starName: params.get("director") ?? "",
-        genre: params.get("genre") ?? "",
-        page: params.get("page") ?? 1,
-        sortBy: params.get("sortBy") ?? "rdta"
-    }
-}
-
-const fetchResult = () => {
-    $("#movie_list_table_body").html("")
-    jQuery.ajax({
-        dataType: "json",
-        method: "GET",
-        url: "api/movies",
-        data: params,
-        success: (resultData, textStatus, xhr) => {
-            handleMovieListResult(resultData)
-            setPagination(resultData["numPages"])
-        },
-        complete: (e, status) => {
-            if (status === "parsererror" && !location.href.endsWith("login.html")) {
-                location.reload();
-            }
-        },
-    });
-}
-
-
-const initMovieList = () => {
-    let searchParams = new URLSearchParams(window.location.search)
-    let sortBy = searchParams.get("sortBy") ?? "rdta"
-    let count = searchParams.get("count") ?? "25"
-    $("#sort").val(sortBy[0] + sortBy[2])
-    $("#order").val(sortBy[1] + sortBy[3])
-    $("#count").val(count)
-    params = prepareParams(searchParams)
-    fetchResult()
-}
 
 const updateSortAndCount = () => {
     let sort = $("#sort").val()
@@ -175,6 +157,12 @@ const updateSortAndCount = () => {
     params["page"] = 1
     history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
+}
+
+const fillInSortAndCount = (sortBy, count) => {
+    $("#sort").val(sortBy[0] + sortBy[2])
+    $("#order").val(sortBy[1] + sortBy[3])
+    $("#count").val(count)
 }
 
 const updateSearchString = () => {
@@ -192,9 +180,59 @@ const updateSearchString = () => {
     fetchResult()
 }
 
-const updatePage = (page) => {
+const updatePageNum = (page) => {
     params["page"] = page
     history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    fetchResult()
+}
+
+
+const prepareParams = (params) => {
+    return {
+        usePrevious: params.get("usePrevious") ?? "0",
+        count: params.get("count") ?? 25,
+        title: params.get("title") ?? "%",
+        year: params.get("year") ?? "",
+        director: params.get("director") ?? "",
+        starName: params.get("director") ?? "",
+        genre: params.get("genre") ?? "",
+        page: params.get("page") ?? 1,
+        sortBy: params.get("sortBy") ?? "rdta",
+        advanced: params.get("advanced") ?? ""
+    }
+}
+
+
+const uesPreviousParams = (resultData) => {
+    console.log(resultData)
+    let paramMap = new Map();
+    paramMap.set("count", resultData["count"] ?? "")
+    paramMap.set("director", resultData["director"] ?? "")
+    paramMap.set("title", resultData["title"] ?? "")
+    paramMap.set("starName", resultData["starName"] ?? "")
+    paramMap.set("year", resultData["year"] ?? "")
+    paramMap.set("sortBy", resultData["sortBy"] ?? "")
+    paramMap.set("page", resultData["page"] ?? "")
+    paramMap.set("genreId", resultData["genreId"] ?? "")
+    paramMap.set("advanced", resultData["advanced"] ?? "")
+    paramMap.set("usePrevious", 0)
+    params = prepareParams(paramMap)
+    history.replaceState({}, null, "/movie-list.html?" + new URLSearchParams(params).toString());
+    fillInSearchParams()
+    fillInSortAndCount(resultData["sortBy"], resultData["count"])
+}
+
+
+const initMovieList = () => {
+    let searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get("usePrevious") === "1") {
+        fetchPreviousResult()
+    } else {
+        let sortBy = searchParams.get("sortBy") ?? "rdta"
+        let count = searchParams.get("count") ?? "25"
+        fillInSortAndCount(sortBy, count)
+    }
+    params = prepareParams(searchParams)
     fetchResult()
 }
 
@@ -210,6 +248,18 @@ $("#search-form").load("search.html");
 
 $("#order, #sort, #count").on("change", (e) => {
     updateSortAndCount()
+})
+
+$("#advance-search-button").on("click", (e) => {
+    console.log("advance search")
+    e.preventDefault()
+    if (e.target.innerHTML === "Advance search") {
+        showAdvanceSearch()
+        e.target.innerHTML = "Hide advance Search"
+    } else {
+        showAdvanceSearch()
+        e.target.innerHTML = "Advance search"
+    }
 })
 
 

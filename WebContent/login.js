@@ -37,7 +37,7 @@ $("#header").load("header.html");
                 method: "POST",
                 data: {username: email, password: password},
                 url: "api/login",
-                success: (resultData) => location.href = "/index.html",
+                success: (resultData) => location.href = "index.html",
                 error: (message) => {
                     let error = JSON.parse(message.responseText)["message"]
                     $("#login-error-feedback").html(error)

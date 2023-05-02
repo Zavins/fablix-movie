@@ -23,6 +23,14 @@
 
 <body class="bg-dark text-white">
 <div id="header"></div>
+<div class="m-3"><a href='movie-list.html?usePrevious=1'>
+    <svg class="bi bi-arrow-left-square-fill" fill="currentColor" height="16" viewBox="0 0 16 16"
+         width="16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1z"/>
+    </svg>
+    Back to Movie List
+</a>
+</div>
 <div class="m-3 text-center px-5">
     <h1 class="display-4 fw-bold animate-character">Shopping Cart</h1>
     <!-- Id "star_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
@@ -51,7 +59,7 @@
             </tfoot>
         </table>
         <div class="d-flex justify-content-between flex-row mt-4">
-            <button class="btn btn-danger">Empty cart</button>
+            <button class="btn btn-danger" id="empty-cart">Empty cart</button>
             <button class="btn btn-success">Proceed to payment</button>
         </div>
     </div>

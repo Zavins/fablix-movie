@@ -119,12 +119,17 @@ public class CartServlet extends HttpServlet {
 
         Cart cart = (Cart) request.getSession().getAttribute("cart");
 
-        cart.delete(movieId);
+        if (movieId != null) {
+            cart.delete(movieId);
+        } else {
+            cart.deleteAll();
+        }
+
+
         responseJsonObject.addProperty("count", cart.count());
         response.setStatus(200);
 
         response.setContentType("application/json");
         response.getWriter().write(responseJsonObject.toString());
     }
-
 }

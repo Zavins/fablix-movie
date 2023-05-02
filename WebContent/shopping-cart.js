@@ -44,10 +44,7 @@ const removeMovie = (id) => {
     jQuery.ajax({
         dataType: "json",
         method: "DELETE",
-        url: "api/cart",
-        data: {
-            movieId: id,
-        },
+        url: "api/cart?movieId=" + id,
         success: (resultData) => {
             $("#cart-header-button").find('span').html(resultData["count"])
             updateCart()
@@ -100,13 +97,26 @@ const updateCart = () => {
 
 // Load common header and footer
 $("#header").load("header.html");
-// $("#footer").load("footer.html");
 
-/**
- * Once this .js is loaded, following scripts will be executed by the browser
- */
 
-// Makes the HTTP GET request and registers on success callback function handleStarResult
 $(document).ready(function () {
     updateCart()
 });
+
+$("#empty-cart").on("click", () => {
+    console.log("3245678")
+    jQuery.ajax({
+        dataType: "json",
+        method: "DELETE",
+        url: "api/cart",
+        success: (resultData) => {
+            $("#cart-header-button").find('span').html(resultData["count"])
+            updateCart()
+        },
+        complete: (e, status) => {
+            if (status.toString().endsWith("error") && !location.href.endsWith("login.html")) {
+                location.reload();
+            }
+        },
+    });
+})

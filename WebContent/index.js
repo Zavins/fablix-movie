@@ -104,7 +104,7 @@ $("#search-form").on("submit", function (e) {
         advanced: advanceSearch,
     }
 
-    location.href = "/movie-list.html?" + new URLSearchParams(params).toString();
+    location.href = "movie-list.html?" + new URLSearchParams(params).toString();
 })
 
 

@@ -38,8 +38,6 @@ function getParameterByName(target) {
 
 function handleResult(resultData) {
 
-    console.log("handleResult: populating movie info from resultData");
-
     // populate the movie info h3
     $("#movie-info-title").text(resultData["title"]);
     $("#movie-info-director").text(resultData["director"]);
@@ -51,10 +49,35 @@ function handleResult(resultData) {
             (star) => `<a href="single-star.html?id=${star['id']}">${star['name']}</a>`
         ).join(", ")
     );
+    $("#add-to-cart").attr("value", resultData["id"])
 }
 
 // Load common header and footer
 $("#header").load("header.html");
+
+$("#add-to-cart").on("click", (e) => {
+    jQuery.ajax({
+        dataType: "json",
+        method: "POST",
+        url: "api/cart",
+        data: {
+            movieId: e.currentTarget['value'],
+            change: 1
+        },
+        success: (resultData) => {
+            $("#cart-header-button").find('span').html(resultData["count"])
+            $("#cart-header-button").addClass("cart-add-item")
+            setTimeout(function () {
+                $("#cart-header-button").removeClass("cart-add-item");
+            }, 200);
+        },
+        complete: (e, status) => {
+            if (status === "parsererror" && !location.href.endsWith("login.html")) {
+                location.reload();
+            }
+        },
+    });
+})
 // $("#footer").load("footer.html");
 
 /**
