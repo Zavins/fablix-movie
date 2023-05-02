@@ -1,1 +1,2 @@
-ALTER TABLE `moviedb`.`sales` ADD COLUMN `quantity` INT NOT NULL;
+ALTER TABLE `moviedb`.`sales`
+    ADD COLUMN `quantity` INTEGER NOT NULL;
