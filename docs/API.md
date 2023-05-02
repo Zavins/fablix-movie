@@ -138,6 +138,8 @@ in the session.
 - movies: List[Object]
   - id: String
   - title: String
+  - year: int
+  - director: String
 
   sorted by year, desc.\
   Use alphabetical order to break ties. 

@@ -99,7 +99,7 @@ $("#search-form").on("submit", function (e) {
         count: 25,
         title: title ? `%${title}%` : '',
         director: director && advanceSearch ? `%${director}%` : '',
-        starName: director && advanceSearch ? `%${starName}%` : '',
+        starName: starName && advanceSearch ? `%${starName}%` : '',
         year: year && advanceSearch ? year : '',
         advanced: advanceSearch,
     }

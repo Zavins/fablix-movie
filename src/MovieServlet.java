@@ -51,9 +51,9 @@ public class MovieServlet extends HttpServlet {
             String query =
                     "SELECT m.`id`, m.`title`, m.`year`, m.`director`, r.`rating`, mglv.`genreList`, mslv.`starList` " +
                             "FROM `moviedb`.`movies` m " +
-                            "JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
-                            "JOIN `moviedb`.`movie_star_list_view` mslv ON m.`id` = mslv.`movieId` " +
-                            "JOIN `moviedb`.`movie_genre_list_view` mglv ON m.`id` = mglv.`movieId` " +
+                            "LEFT JOIN `moviedb`.`ratings` r ON m.`id` = r.`movieId` " +
+                            "LEFT JOIN `moviedb`.`movie_star_list_view` mslv ON m.`id` = mslv.`movieId` " +
+                            "LEFT JOIN `moviedb`.`movie_genre_list_view` mglv ON m.`id` = mglv.`movieId` " +
                             "WHERE m.`id` = ?";
 
             try (PreparedStatement statement = conn.prepareStatement(query)) {
