@@ -229,7 +229,7 @@ public class MoviesServlet extends HttpServlet {
                 statement.setBoolean(5, title == null);
                 statement.setString(6, title == null ? "" : title);
                 statement.setBoolean(7, director == null);
-                statement.setString(8, director == null ? "" : title);
+                statement.setString(8, director == null ? "" : director);
                 statement.setBoolean(9, year == null);
                 statement.setInt(10, year == null ? 0 : year);
                 try (ResultSet rs = statement.executeQuery()) {

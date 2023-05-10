@@ -91,7 +91,7 @@ const updateCart = () => {
             handleCartResult(resultData["result"])
             $("#total").html(`$${resultData["total"].toFixed(2)}`)
             $("#cart-header-button").find('span').html(resultData["count"])
-            if (resultData["total"] > 0) hasItem = true;
+            hasItem = resultData["count"] !== 0;
         }
     });
 }

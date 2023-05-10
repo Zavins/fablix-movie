@@ -170,12 +170,15 @@ const updateSearchString = () => {
     let director = $("#director").val()
     let starName = $("#star").val()
     let year = $("#year").val()
-    params["title"] = title ? `%${title}%` : '%'
-    params["director"] = director && advanceSearch ? `%${director}%` : ''
-    params["starName"] = starName && advanceSearch ? `%${starName}%` : ''
-    params["year"] = year && advanceSearch ? year : ''
-    params["page"] = 1
-    params["advanced"] = advanceSearch
+    let paramMap = new Map()
+    paramMap.set("title", title ? `%${title}%` : '%')
+    paramMap.set("director", director && advanceSearch ? `%${director}%` : '')
+    paramMap.set("starName", starName && advanceSearch ? `%${starName}%` : '')
+    paramMap.set("year", year && advanceSearch ? year : '')
+    paramMap.set("page", 1)
+    paramMap.set("advanced", advanceSearch)
+    params = prepareParams(paramMap)
+    fillInSortAndCount(params["sortBy"], params["count"])
     history.replaceState({}, null, "movie-list.html?" + new URLSearchParams(params).toString());
     fetchResult()
 }
@@ -213,7 +216,7 @@ const uesPreviousParams = (resultData) => {
     paramMap.set("year", resultData["year"] ?? "")
     paramMap.set("sortBy", resultData["sortBy"] ?? "")
     paramMap.set("page", resultData["page"] ?? "")
-    paramMap.set("genreId", resultData["genreId"] ?? "")
+    paramMap.set("genre", resultData["genre"] ?? "")
     paramMap.set("advanced", resultData["advanced"] ?? "")
     paramMap.set("usePrevious", 0)
     params = prepareParams(paramMap)
@@ -267,4 +270,5 @@ var params = {}
 $(document).ready(function () {
     initMovieList()
 });
+
 
