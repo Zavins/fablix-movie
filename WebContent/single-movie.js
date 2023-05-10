@@ -44,7 +44,7 @@ function handleResult(resultData) {
     $("#movie-info-year").text(resultData["year"]);
     $("#movie-info-genres").html(
         resultData["genres"].map(
-            (genre) => `<a href="index.html?genre=${genre['id']}">${genre['name']}</a>`
+            (genre) => `<a href="movie-list.html?genre=${genre['id']}">${genre['name']}</a>`
         ).join(", ")
     );
     $("#movie-info-rating").text(resultData["rating"]);
