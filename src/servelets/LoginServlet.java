@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.User;
+import org.jasypt.util.password.StrongPasswordEncryptor;
 import utils.RecaptchaVerifyUtils;
 
 import javax.naming.InitialContext;
@@ -59,14 +60,19 @@ public class LoginServlet extends HttpServlet {
     // Check if password is correct given the username (email)
     private Integer getUserId(Connection conn, String username, String password) throws SQLException {
         // Check if email (username) exists
-        String query = "SELECT `id` FROM `customers` WHERE `email` = ? AND `password` = ?";
+        String query = "SELECT `id`, `password` FROM `customers` WHERE `email` = ?";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
-            statement.setString(2, password);
             try (ResultSet rs = statement.executeQuery()) {
-                // Get first row and first column
-                boolean hasUser = rs.next();
-                return hasUser ? rs.getInt(1) : null;
+                if (rs.next()) {
+                    // get the encrypted password from the database
+                    String encryptedPassword = rs.getString("password");
+                    int userId = rs.getInt(1);
+                    // use the same encryptor to compare the user input password with encrypted password stored in DB
+                    boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+                    return success ? userId : null;
+                }
+                return null;
             }
         }
     }
