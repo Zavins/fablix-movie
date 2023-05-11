@@ -1,3 +1,5 @@
+package servelets;
+
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,8 +22,8 @@ import java.util.HashSet;
 import static utils.Utils.mapToJson;
 
 
-// Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
-@WebServlet(name = "MovieListServlet", urlPatterns = "/api/movie-list")
+// Declaring a WebServlet called servelets.StarsServlet, which maps to url "/api/stars"
+@WebServlet(name = "servelets.MovieListServlet", urlPatterns = "/api/movie-list")
 public class MovieListServlet extends HttpServlet {
     private static final long serialVersionUID = 3L;
 

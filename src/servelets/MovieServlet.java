@@ -1,3 +1,5 @@
+package servelets;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
@@ -10,9 +12,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-@WebServlet(name = "MovieServlet", urlPatterns = "/api/movie")
+@WebServlet(name = "servelets.MovieServlet", urlPatterns = "/api/movie")
 public class MovieServlet extends HttpServlet {
     private DataSource dataSource;
 

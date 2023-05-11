@@ -32,15 +32,17 @@ $("#header").load("header.html");
             event.preventDefault()
             let email = $('#email').val()
             let password = $('#password').val()
+            let recaptcha = grecaptcha.getResponse();
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
-                data: {username: email, password: password},
+                data: {username: email, password: password, ['g-recaptcha-response']: recaptcha},
                 url: "api/login",
                 success: (resultData) => location.href = "index.html",
                 error: (message) => {
                     let error = JSON.parse(message.responseText)["message"]
                     $("#login-error-feedback").html(error)
+                    grecaptcha.reset();
                 }
             });
         }

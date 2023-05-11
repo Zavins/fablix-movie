@@ -1,3 +1,5 @@
+package models;
+
 public class Search {
     private final int count;
     private final int page;

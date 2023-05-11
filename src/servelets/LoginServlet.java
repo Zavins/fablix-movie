@@ -1,9 +1,13 @@
+package servelets;
+
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.User;
+import utils.RecaptchaVerifyUtils;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -27,7 +31,7 @@ import java.sql.SQLException;
  *      (session):
  *          name: String
  */
-@WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
+@WebServlet(name = "servelets.LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
     private DataSource dataSource;
 
@@ -62,7 +66,7 @@ public class LoginServlet extends HttpServlet {
             try (ResultSet rs = statement.executeQuery()) {
                 // Get first row and first column
                 boolean hasUser = rs.next();
-                return hasUser? rs.getInt(1) : null;
+                return hasUser ? rs.getInt(1) : null;
             }
         }
     }
@@ -73,23 +77,32 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
         JsonObject responseJsonObject = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
-            if (checkUsername(conn, username)) {
-                Integer userId = getUserId(conn, username, password);
-                if (userId != null) {
-                    response.setStatus(200);
-                    request.getSession().setAttribute("user", new User(userId, username));
+            String recaptchaResult = RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+            System.out.println(recaptchaResult);
+            if (recaptchaResult.equals("success")) {
+                if (checkUsername(conn, username)) {
+                    Integer userId = getUserId(conn, username, password);
+                    if (userId != null) {
+                        response.setStatus(200);
+                        request.getSession().setAttribute("user", new User(userId, username));
+                    } else {
+                        response.setStatus(401);
+                        responseJsonObject.addProperty("message", "incorrect password");
+                    }
                 } else {
                     response.setStatus(401);
-                    responseJsonObject.addProperty("message", "incorrect password");
+                    responseJsonObject.addProperty("message", "user " + username + " doesn't exist");
                 }
             } else {
                 response.setStatus(401);
-                responseJsonObject.addProperty("message", "user " + username + " doesn't exist");
+                responseJsonObject.addProperty("message", "recaptcha verification failed");
             }
+
         } catch (Exception e) {
             response.setStatus(500);
             responseJsonObject.addProperty("message", e.getMessage());
