@@ -1,3 +1,5 @@
+package servelets;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
@@ -5,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.Cart;
+import models.User;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -15,7 +19,7 @@ import java.util.Map;
 
 import static utils.Utils.getMovieTitle;
 
-@WebServlet(name = "CartCheckoutServlet", urlPatterns = "/api/cart/checkout")
+@WebServlet(name = "servelets.CartCheckoutServlet", urlPatterns = "/api/cart/checkout")
 public class CartCheckoutServlet extends HttpServlet {
     private DataSource dataSource;
 

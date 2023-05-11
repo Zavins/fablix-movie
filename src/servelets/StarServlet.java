@@ -1,3 +1,5 @@
+package servelets;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
@@ -10,9 +12,12 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-@WebServlet(name = "StarServlet", urlPatterns = "/api/star")
+@WebServlet(name = "servelets.StarServlet", urlPatterns = "/api/star")
 public class StarServlet extends HttpServlet {
     private DataSource dataSource;
 
@@ -27,11 +32,11 @@ public class StarServlet extends HttpServlet {
     private JsonArray getMovies(Connection conn, String starId) throws SQLException {
         @SuppressWarnings("SqlAggregates") String query =
                 "SELECT m.`id`, m.`title`, m.`year`, m.`director`\n" +
-                "FROM `moviedb`.`stars_in_movies` sm\n" +
-                "JOIN `moviedb`.`movies` m ON m.`id` = sm.`movieId`\n" +
-                "WHERE sm.`starId` = ?\n" +
-                "GROUP BY m.`id`\n" +
-                "ORDER BY m.`year` DESC, m.`title`";
+                        "FROM `moviedb`.`stars_in_movies` sm\n" +
+                        "JOIN `moviedb`.`movies` m ON m.`id` = sm.`movieId`\n" +
+                        "WHERE sm.`starId` = ?\n" +
+                        "GROUP BY m.`id`\n" +
+                        "ORDER BY m.`year` DESC, m.`title`";
 
         JsonArray result = new JsonArray();
 
@@ -77,8 +82,8 @@ public class StarServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             String query =
                     "SELECT s.`id`, s.`name`, s.`birthYear`\n" +
-                    "FROM `moviedb`.`stars` s\n" +
-                    "WHERE s.`id` = ?";
+                            "FROM `moviedb`.`stars` s\n" +
+                            "WHERE s.`id` = ?";
 
             try (PreparedStatement statement = conn.prepareStatement(query)) {
                 statement.setString(1, id);

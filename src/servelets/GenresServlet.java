@@ -1,3 +1,5 @@
+package servelets;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
@@ -10,9 +12,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-@WebServlet(name = "GenresServlet", urlPatterns = "/api/genres")
+@WebServlet(name = "servelets.GenresServlet", urlPatterns = "/api/genres")
 public class GenresServlet extends HttpServlet {
     private DataSource dataSource;
 
