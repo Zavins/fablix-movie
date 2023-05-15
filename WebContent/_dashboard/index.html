@@ -18,30 +18,18 @@
           integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
     <link href="index.css" rel="stylesheet">
-    <link href="search.css" rel="stylesheet">
 
-    <title>Main</title>
+    <title>Dashboard</title>
 </head>
 <body class="bg-dark text-white d-flex flex-column justify-content-start">
 <div id="header"></div>
-<div class="container-lg d-flex flex-column justify-content-center align-items-center h-100">
-    <div class="col-sm-12 col-lg-8" id="search-container">
-        <h1 class="display-4 text-center mb-5 animate-character">Search</h1>
-        <form class="needs-validation" id="search-form" novalidate></form>
-        <div class="d-flex flex-row justify-content-between" id="utils-section">
-            <a href="#" id="advance-search-button" class="link-warning">Advance search</a>
-            <a href="#" id="browse-button" class="link-info">Browse by substrings</a>
-        </div>
+<div class="container-lg d-flex flex-column justify-content-start align-items-center h-100">
+    <div class="col-sm-12 col-lg-8 mt-5">
+        <h1 class="display-4 text-center mb-5 animate-character">Metadata</h1>
     </div>
-    <div class="container-sm col-sm-12 col-lg-8 d-flex flex-row gap-5 mt-5 text-center">
-        <div class="col-8 row g-3 justify-content-start" id="browse-letters"></div>
-        <div class="col-3 row g-3 justify-content-end" id="browse-numbers"></div>
-    </div>
-    <div class="container-sm col-sm-12 col-lg-8 d-flex flex-row gap-5 text-center">
-        <div class="col-12 row g-3 justify-content-start" id="browse-genres"></div>
-    </div>
+    <div class="w-100 text-center pb-5" id="metadata"></div>
 </div>
-
+<!--placeholder-->
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
@@ -52,8 +40,6 @@
 <!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
      otherwise the url is relative to the root path-->
 <script src="index.js"></script>
-<script src="search.js"></script>
 </body>
-
 
 </html>
