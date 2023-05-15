@@ -2,7 +2,7 @@
 
 ## Demo Video
 
-https://drive.google.com/file/d/1JnCykLoehSsDUNJu59DArUQ7gwUyKf9C/view?usp=share_link
+https://drive.google.com/file/d/11aAU9FFsVEtUQRUG8nFTa6gMmNOyAcZF/view?usp=sharing
 
 ## Contribution
 
@@ -31,46 +31,52 @@ All parsing finished in 1278375ms
 
 ### With index
 
+**Optimization 1: Index created on stars and movies table to speed up search**
+
 > CREATE INDEX stars_name_index ON stars (name);  
 > CREATE INDEX movies_title_director_index ON movies (title, director);
 
-All parsing finished in 199572ms
+All parsing finished in 199572ms.
+
+It is 1078 seconds faster than without index.
 
 ### With index and batch insert
 
-Batch insert is used when inserting into movies, stars, and stars_in_movies tables.
+**Optimization 2: Batch insert is used when inserting into movies, stars, and stars_in_movies tables.**
 
 All parsing finished in 189250ms
 
-### With index, batch insert, and genre id cache
-
-All parsing finished in 183549ms
+It is 10 seconds faster than only with optimization 1.
 
 ### With index, batch insert, genre id cache, movie id cache, and star id cache
 
+**Optimization 3: Use hash map to cache genre id, movie id, and star id to avoid querying database.
+Also used hash set to check for duplicated records, avoiding querying database.
+These data structures allow O(1) time complexity for checking and inserting.**
+
 All parsing finished in 180086ms
 
+It is 9 seconds faster than only with optimization 1 and 2.
+
 ### With index, batch insert, genre id cache, movie id cache, star id cache, and auto commit off
+
+Optimization 4: auto commit off. (not counted)
 
 All parsing finished in 21873ms
 
 ## Inconsistent Data
 
-### MainParser
+The txt files are in the ./xml-parser folder.
 
 movie-duplicates.txt records the movies that are already in the database, which means the title, year, and director all
 match an existing record.
 
 movie-errors.txt records the movies that caused an error when parsing mains243.xml, with reason in the file.
 
-### ActorParser
-
 star-duplicates.txt records the stars that are already in the database, which means the name and birth year all match an
 existing record.
 
 star-errors.txt records the stars that caused an error when parsing actors63.xml, with reason in the file.
-
-### CastParser
 
 movie-not-found.txt records the movies that are not found in movies63.xml or database when parsing casts124.xml.
 
