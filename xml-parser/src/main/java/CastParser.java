@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CastParser {
     private int starInMovieCount;
@@ -29,6 +31,11 @@ public class CastParser {
     private BufferedWriter movieNotFoundBufferedWriter;
     private FileWriter starMovieErrorWriter;
     private BufferedWriter starMovieErrorBufferedWriter;
+    private PreparedStatement insertStarInMovieStatement;
+    // key: movie id, value: actual movie id
+    private Map<String, String> movieIdCache;
+    // key: star name, value: star id, if not exists "" (empty string)
+    private Map<String, String> starIdCache;
 
     public CastParser(Connection conn) {
         this.conn = conn;
@@ -36,7 +43,8 @@ public class CastParser {
         this.starNotFoundCount = 0;
         this.starInMovieCount = 0;
         this.starMovieErrorCount = 0;
-
+        this.movieIdCache = new HashMap<>();
+        this.starIdCache = new HashMap<>();
     }
 
     public void init(String filename) {
@@ -62,6 +70,13 @@ public class CastParser {
         } catch (IOException error) {
             error.printStackTrace();
         }
+
+        String insertQuery = "INSERT INTO stars_in_movies (starId, movieId) VALUES (?, ?)";
+        try {
+            insertStarInMovieStatement = conn.prepareStatement(insertQuery);
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
+        }
     }
 
     public void clean() {
@@ -74,6 +89,12 @@ public class CastParser {
             starMovieErrorWriter.close();
         } catch (IOException error) {
             error.printStackTrace();
+        }
+
+        try {
+            insertStarInMovieStatement.close();
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
         }
     }
 
@@ -105,40 +126,51 @@ public class CastParser {
     }
 
     private void addMovieStar(String movieId, String starName, String directorName, String movieTitle) throws SQLException {
-        String foundMovieid = null;
-        String starId = null;
-
         // Find star id
-        String checkStarQuery = "SELECT * FROM stars WHERE name = ?";
-        try (PreparedStatement statement = conn.prepareStatement(checkStarQuery)) {
-            statement.setString(1, starName);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                starId = rs.getString("id");
-            }
-        }
+        String starId = starIdCache.get(starName);
 
         if (starId == null) {
+            String checkStarQuery = "SELECT * FROM stars WHERE name = ?";
+            try (PreparedStatement statement = conn.prepareStatement(checkStarQuery)) {
+                statement.setString(1, starName);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    starId = rs.getString("id");
+                    starIdCache.put(starName, starId);
+                }
+            }
+            if (starId == null) {
+                starIdCache.put(starName, "");
+                reportStarNotFound(starName + "(fid " + movieId + ")");
+                return;
+            }
+        } else if (starId.equals("")) {
             reportStarNotFound(starName + "(fid " + movieId + ")");
             return;
         }
 
+
+
         // Find movie id
+        String foundMovieid = movieIdCache.get(movieId);
 
         // Check if movie exists by movieId
-        String checkMovieIdQuery = "SELECT id FROM movies WHERE id = ?";
-        try (PreparedStatement statement = conn.prepareStatement(checkMovieIdQuery)) {
-            statement.setString(1, movieId);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                foundMovieid = rs.getString("id");
+        if (foundMovieid == null) {
+            String checkMovieIdQuery = "SELECT id FROM movies WHERE id = ?";
+            try (PreparedStatement statement = conn.prepareStatement(checkMovieIdQuery)) {
+                statement.setString(1, movieId);
+                ResultSet rs = statement.executeQuery();
+                if (rs.next()) {
+                    foundMovieid = rs.getString("id");
+                    movieIdCache.put(movieId, foundMovieid);
+                }
             }
         }
 
         // Assumption: title + director is unique
 
+        // Check if movie exists by title and director name
         if (foundMovieid == null) {
-            // Check if movie exists by title and director name
             String checkMovieTitleDirectorQuery = "SELECT id FROM movies WHERE title = ? AND director = ?";
             try (PreparedStatement statement = conn.prepareStatement(checkMovieTitleDirectorQuery)) {
                 statement.setString(1, movieTitle);
@@ -146,6 +178,7 @@ public class CastParser {
                 ResultSet rs = statement.executeQuery();
                 if (rs.next()) {
                     foundMovieid = rs.getString("id");
+                    movieIdCache.put(movieId, foundMovieid);
                 }
             }
         }
@@ -156,12 +189,12 @@ public class CastParser {
         }
 
         // Insert into stars_in_movies
-        String insertQuery = "INSERT INTO stars_in_movies (starId, movieId) VALUES (?, ?)";
-        try (PreparedStatement statement = conn.prepareStatement(insertQuery)) {
-            statement.setString(1, starId);
-            statement.setString(2, foundMovieid);
-            statement.executeUpdate();
-            starInMovieCount++;
+        try {
+            insertStarInMovieStatement.setString(1, starId);
+            insertStarInMovieStatement.setString(2, foundMovieid);
+            insertStarInMovieStatement.addBatch();
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
         }
     }
 
@@ -211,6 +244,16 @@ public class CastParser {
                 }
             }
         }
+
+        try {
+            conn.setAutoCommit(false);
+            starInMovieCount = insertStarInMovieStatement.executeBatch().length;
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
+        }
+
         System.out.println("Inserted " + starInMovieCount + " star in movie relations");
         System.out.println(starNotFoundCount + " stars not found");
         System.out.println(movieNotFoundCount + " movies not found");

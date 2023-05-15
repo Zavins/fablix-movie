@@ -54,3 +54,81 @@ Inserted 33082 star in movie relations
 273 movies not found
 CastParser finished in 114325ms
 All parsing finished in 199572ms
+
+## With index and batch insert
+
+Batch insert is used when inserting into movies, stars, and stars_in_movies tables.
+
+MainParser started
+Inserted 12014 movies
+Ignored 52 duplicate movies
+Skipped 228 movie entries with error
+MainParser finished in 63262ms
+ActorParser started
+Inserted 6209 stars
+Ignored 653 duplicate stars
+Skipped 1 star entries with error
+ActorParser finished in 18514ms
+CastParser started
+Inserted 33103 star in movie relations
+15505 stars not found
+252 movies not found
+CastParser finished in 107470ms
+All parsing finished in 189250ms
+
+# With index, batch insert, and genre id cache
+
+MainParser started
+Inserted 12014 movies
+Ignored 52 duplicate movies
+Skipped 227 movie entries with error
+MainParser finished in 63665ms
+ActorParser started
+Inserted 6209 stars
+Ignored 653 duplicate stars
+Skipped 1 star entries with error
+ActorParser finished in 17760ms
+CastParser started
+Inserted 33103 star in movie relations
+15505 stars not found
+252 movies not found
+CastParser finished in 102119ms
+All parsing finished in 183549ms
+
+# With index, batch insert, genre id cache, movie id cache, and star id cache
+
+MainParser started
+Inserted 12014 movies
+Ignored 52 duplicate movies
+Skipped 227 movie entries with error
+MainParser finished in 66282ms
+ActorParser started
+Inserted 6209 stars
+Ignored 653 duplicate stars
+Skipped 1 star entries with error
+ActorParser finished in 18094ms
+CastParser started
+Inserted 33103 star in movie relations
+15505 stars not found
+252 movies not found
+CastParser finished in 95706ms
+All parsing finished in 180086ms
+
+# With index, batch insert, genre id cache, movie id cache, star id cache, and auto commit off
+
+MainParser started
+Inserted 12014 movies
+Ignored 52 duplicate movies
+Skipped 227 movie entries with error
+MainParser finished in 8688ms
+ActorParser started
+Inserted 6209 stars
+Ignored 653 duplicate stars
+Skipped 1 star entries with error
+ActorParser finished in 2682ms
+CastParser started
+Inserted 33103 star in movie relations
+15505 stars not found
+252 movies not found
+CastParser finished in 10501ms
+All parsing finished in 21873ms

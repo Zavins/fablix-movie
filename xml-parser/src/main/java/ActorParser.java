@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ActorParser {
     private int starDuplicateCount;
@@ -26,12 +28,15 @@ public class ActorParser {
     private BufferedWriter starDuplicateBufferedWriter;
     private FileWriter starErrorWriter;
     private BufferedWriter starErrorBufferedWriter;
+    private PreparedStatement insertStarStatement;
+    private Set<String> insertedStarIds;
 
     public ActorParser(Connection conn) {
         this.conn = conn;
         this.starDuplicateCount = 0;
         this.starInsertCount = 0;
         this.starErrorCount = 0;
+        insertedStarIds = new HashSet<>();
     }
 
     public void init(String filename) {
@@ -55,6 +60,13 @@ public class ActorParser {
         } catch (IOException error) {
             error.printStackTrace();
         }
+
+        String insertQuery = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
+        try {
+            insertStarStatement = conn.prepareStatement(insertQuery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void clean() {
@@ -65,6 +77,12 @@ public class ActorParser {
             starErrorWriter.close();
         } catch (IOException error) {
             error.printStackTrace();
+        }
+
+        try {
+            insertStarStatement.close();
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
         }
     }
 
@@ -95,23 +113,27 @@ public class ActorParser {
             statement.setInt(3, birthYear == null ? 0 : birthYear);
             if (statement.executeQuery().next()) {
                 reportStarDuplicate(name + " " + birthYear);
+                return;
             }
         }
 
         // Insert
         String id = Util.generateId(name + birthYear, 10);
-        String insertQuery = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = conn.prepareStatement(insertQuery)) {
-            statement.setString(1, id);
-            statement.setString(2, name);
-            if (birthYear == null)
-                statement.setNull(3, java.sql.Types.INTEGER);
-            else
-                statement.setInt(3, birthYear);
-            statement.executeUpdate();
-            starInsertCount++;
-        } catch (SQLIntegrityConstraintViolationException error) {
+        boolean inserted = !insertedStarIds.add(id);
+        if (inserted) {
             reportStarDuplicate(name + " " + birthYear);
+            return;
+        }
+        try {
+            insertStarStatement.setString(1, id);
+            insertStarStatement.setString(2, name);
+            if (birthYear == null)
+                insertStarStatement.setNull(3, java.sql.Types.INTEGER);
+            else
+                insertStarStatement.setInt(3, birthYear);
+            insertStarStatement.addBatch();
+        } catch (SQLIntegrityConstraintViolationException error) {
+            throw new RuntimeException(error);
         }
     }
 
@@ -143,6 +165,15 @@ public class ActorParser {
             } catch (SQLException error) {
                 error.printStackTrace();
             }
+        }
+
+        try {
+            conn.setAutoCommit(false);
+            starInsertCount = insertStarStatement.executeBatch().length;
+            conn.commit();
+            conn.setAutoCommit(true);
+        } catch (SQLException error) {
+            throw new RuntimeException(error);
         }
 
         System.out.println("Inserted " + starInsertCount + " stars");

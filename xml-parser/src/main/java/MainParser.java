@@ -15,10 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 class MainParser {
@@ -34,12 +31,14 @@ class MainParser {
     private PreparedStatement insertMovieStatement;
     private PreparedStatement insertMovieGenreStatement;
     private Set<String> insertedMovieIds;
+    private Map<String, Integer> genreCache;
 
     public MainParser(Connection conn) {
         this.conn = conn;
         this.movieErrorCount = 0;
         this.movieDuplicateCount = 0;
         this.insertedMovieIds = new HashSet<>();
+        this.genreCache = new HashMap<>();
     }
 
     public void init(String filename) {
@@ -149,6 +148,10 @@ class MainParser {
 
     /* Returns genreId */
     private int addGenre(String code) throws RuntimeException, SQLException {
+        if (genreCache.containsKey(code)) {
+            return genreCache.get(code);
+        }
+
         // cat code to name mapping at http://infolab.stanford.edu/pub/movies/doc.html#CATS
         // lowercase the code
         Map<String, String> catCodeToName = Map.ofEntries(
@@ -195,8 +198,11 @@ class MainParser {
         try (PreparedStatement statement = conn.prepareStatement(selectQuery)) {
             statement.setString(1, genre);
             try (var resultSet = statement.executeQuery()) {
-                if (resultSet.next())
-                    return resultSet.getInt(1);
+                if (resultSet.next()) {
+                    int foundGenreId = resultSet.getInt(1);
+                    genreCache.put(genre, foundGenreId);
+                    return foundGenreId;
+                }
             }
         }
 
@@ -206,7 +212,9 @@ class MainParser {
             statement.executeUpdate();
             try (var resultSet = statement.getGeneratedKeys()) {
                 resultSet.next();
-                return resultSet.getInt(1);
+                int foundGenreId = resultSet.getInt(1);
+                genreCache.put(genre, foundGenreId);
+                return foundGenreId;
             }
         }
     }
@@ -306,8 +314,12 @@ class MainParser {
         }
 
         try {
+            conn.setAutoCommit(false);
             movieInsertCount = insertMovieStatement.executeBatch().length;
+            conn.commit();
             insertMovieGenreStatement.executeBatch();
+            conn.commit();
+            conn.setAutoCommit(true);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
