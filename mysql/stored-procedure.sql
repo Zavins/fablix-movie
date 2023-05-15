@@ -158,7 +158,7 @@ BEGIN
     INSERT INTO genres_in_movies (`movieId`, `genreId`)
     VALUES (movie_id, genre_id);
     COMMIT;
-    SET status = CONCAT('Movie added. ID:', movie_id);
+    SET status = CONCAT('Movie added. Movie ID:', movie_id, ' Genre ID:', genre_id, ' Star ID:', star_id);
 END
 //
 DELIMITER ;
