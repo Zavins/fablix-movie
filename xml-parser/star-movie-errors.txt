@@ -1,0 +1,5 @@
+Invalid <a> stage name entry on movie ClC18
+Invalid <a> stage name entry on movie DMl10
+Invalid <a> stage name entry on movie H65
+Invalid <is> director name entry on 1072th dirfilms
+Invalid <is> director name entry on 1073th dirfilms
