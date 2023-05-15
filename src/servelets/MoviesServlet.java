@@ -181,28 +181,32 @@ public class MoviesServlet extends HttpServlet {
                         rowJsonObject.addProperty("rating", rowRating);
 
                         JsonArray genreListJsonArray = new JsonArray();
-                        String[] genreList = rowGenreList.split(";", 4);
-                        for (int i = 0; i < Math.min(genreList.length, genreCount); ++i) {
-                            String genre = genreList[i];
-                            JsonObject genreObj = new JsonObject();
-                            int genreObjId = Integer.parseInt(genre.split("\\|")[0]);
-                            String genreObjName = genre.split("\\|")[1];
-                            genreObj.addProperty("id", genreObjId);
-                            genreObj.addProperty("name", genreObjName);
-                            genreListJsonArray.add(genreObj);
+                        if (rowGenreList != null) {
+                            String[] genreList = rowGenreList.split(";", 4);
+                            for (int i = 0; i < Math.min(genreList.length, genreCount); ++i) {
+                                String genre = genreList[i];
+                                JsonObject genreObj = new JsonObject();
+                                int genreObjId = Integer.parseInt(genre.split("\\|")[0]);
+                                String genreObjName = genre.split("\\|")[1];
+                                genreObj.addProperty("id", genreObjId);
+                                genreObj.addProperty("name", genreObjName);
+                                genreListJsonArray.add(genreObj);
+                            }
                         }
                         rowJsonObject.add("genres", genreListJsonArray);
 
                         JsonArray starListJsonArray = new JsonArray();
-                        String[] starList = rowStarList.split(";", 4);
-                        for (int i = 0; i < Math.min(starList.length, starCount); ++i) {
-                            String star = starList[i];
-                            JsonObject starObj = new JsonObject();
-                            String starObjId = star.split("\\|")[0];
-                            String starObjName = star.split("\\|")[1];
-                            starObj.addProperty("id", starObjId);
-                            starObj.addProperty("name", starObjName);
-                            starListJsonArray.add(starObj);
+                        if (rowStarList != null) {
+                            String[] starList = rowStarList.split(";", 4);
+                            for (int i = 0; i < Math.min(starList.length, starCount); ++i) {
+                                String star = starList[i];
+                                JsonObject starObj = new JsonObject();
+                                String starObjId = star.split("\\|")[0];
+                                String starObjName = star.split("\\|")[1];
+                                starObj.addProperty("id", starObjId);
+                                starObj.addProperty("name", starObjName);
+                                starListJsonArray.add(starObj);
+                            }
                         }
                         rowJsonObject.add("stars", starListJsonArray);
 

@@ -118,7 +118,9 @@ public class ActorParser {
         }
 
         // Insert
-        String id = Util.generateId(name + birthYear, 10);
+        String id = Util.generateId(name + birthYear, 8);
+        // avoid id too large
+        id = "a" + id;
         boolean inserted = !insertedStarIds.add(id);
         if (inserted) {
             reportStarDuplicate(name + " " + birthYear);

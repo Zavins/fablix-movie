@@ -24,7 +24,8 @@ BEGIN
     VALUES (new_star_id, name, year);
     SET status = CONCAT('Star added ID:', new_star_id);
 END
-//DELIMITER ;
+//
+DELIMITER ;
 
 -- ---------------------add genre store procedure
 DELIMITER //
@@ -42,10 +43,13 @@ BEGIN
     FROM genres
     LIMIT 1;
 
+    SET genre_exist = 0;
+
     SELECT COUNT(*), g.id
     INTO genre_exist, genre_id
     FROM genres as g
     WHERE g.name = name
+    GROUP BY g.id
     LIMIT 1;
 
     IF genre_exist > 0 THEN
@@ -58,7 +62,8 @@ BEGIN
         SET status = CONCAT('Genre added ID:', new_genre_id);
     END IF;
 END
-//DELIMITER ;
+//
+DELIMITER ;
 
 -- ---------------------add movie store procedure
 DELIMITER //
@@ -83,12 +88,15 @@ BEGIN
 
     START TRANSACTION;
     -- --------Check if the movie already exists
+    SET movie_exist = 0;
+
     SELECT COUNT(*), m.id
     INTO movie_exist, movie_id
     FROM movies as m
     WHERE m.title = title
       AND m.year = year
-      AND m.director = director;
+      AND m.director = director
+    GROUP BY m.id;
 
     IF movie_exist > 0 THEN
         SET status = CONCAT('Movie already exists. ID:', movie_id);
@@ -99,11 +107,14 @@ BEGIN
     END IF;
 
     -- --------Check if the star already exists
+    SET star_exist = 0;
+
     IF birth_year IS NULL THEN
         SELECT COUNT(*), s.id
         INTO star_exist, star_id
         FROM stars as s
         WHERE s.name = star_name
+        GROUP BY s.id
         LIMIT 1;
     ELSE
         SELECT COUNT(*), s.id
@@ -111,6 +122,7 @@ BEGIN
         FROM stars as s
         WHERE s.name = star_name
           AND s.birthYear = birth_year
+        GROUP BY s.id
         LIMIT 1;
     END IF;
 
@@ -120,10 +132,13 @@ BEGIN
     END IF;
 
     -- --------Check if the genre already exists
+    SET genre_exist = 0;
+
     SELECT COUNT(*), g.id
     INTO genre_exist, genre_id
     FROM genres as g
     WHERE g.name = genre
+    GROUP BY g.id
     LIMIT 1;
 
     IF genre_exist = 0 THEN -- if star not exists
@@ -145,4 +160,5 @@ BEGIN
     COMMIT;
     SET status = CONCAT('Movie added. ID:', movie_id);
 END
-//DELIMITER ;
+//
+DELIMITER ;

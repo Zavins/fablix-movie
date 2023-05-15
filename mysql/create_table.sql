@@ -76,6 +76,14 @@ CREATE TABLE ratings (
     FOREIGN KEY (`movieId`) REFERENCES movies(`id`)
 );
 
+CREATE TABLE employees (
+    `email` varchar(50) primary key,
+    `password` varchar(20) not null,
+    `fullname` varchar(100)
+);
+
+INSERT INTO employees VALUES ('classta@email.edu', 'NCnY9S/opn+Lngue89H/QKLnKqm2AA1yAM326+j2uWJsGMITszCJwPFnXGOZcm1f', 'TA CS122B');
+
 
 -- Create Views --
 -- CREATE movie_list view --

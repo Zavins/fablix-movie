@@ -262,6 +262,10 @@ class MainParser {
                     reportMovieError("Invalid movie id directed by " + director);
                     continue;
                 }
+
+                // avoid id too large
+                id = "a" + id;
+
                 String title;
                 // Schema violation: Should have only one <t> tag. Solution: Ignore.
                 try {

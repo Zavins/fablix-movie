@@ -90,13 +90,15 @@ public class MovieServlet extends HttpServlet {
                     responseJsonObject.add("genres", genreList);
 
                     JsonArray starList = new JsonArray();
-                    for (String star : rowStarList.split(";")) {
-                        JsonObject starObj = new JsonObject();
-                        String starObjId = star.split("\\|")[0];
-                        String starObjName = star.split("\\|")[1];
-                        starObj.addProperty("id", starObjId);
-                        starObj.addProperty("name", starObjName);
-                        starList.add(starObj);
+                    if (rowStarList != null) {
+                        for (String star : rowStarList.split(";")) {
+                            JsonObject starObj = new JsonObject();
+                            String starObjId = star.split("\\|")[0];
+                            String starObjName = star.split("\\|")[1];
+                            starObj.addProperty("id", starObjId);
+                            starObj.addProperty("name", starObjName);
+                            starList.add(starObj);
+                        }
                     }
                     responseJsonObject.add("stars", starList);
                 }

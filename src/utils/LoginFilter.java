@@ -33,13 +33,15 @@ public class LoginFilter implements Filter {
             return;
         }
 
-        boolean isDashboard = httpRequest.getRequestURI().startsWith("/_dashboard");
+        String contextPath = httpRequest.getContextPath();
+
+        boolean isDashboard = httpRequest.getRequestURI().startsWith(contextPath + "/_dashboard");
         // Redirect to login page if the "user" attribute doesn't exist in session
         if (isDashboard && httpRequest.getSession().getAttribute("employee") == null) {
-            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() + "/_dashboard/login.html");
+            httpResponse.sendRedirect(contextPath + "/_dashboard/login.html");
             return;
         } else if (!isDashboard && httpRequest.getSession().getAttribute("user") == null) {
-            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() + "/login.html");
+            httpResponse.sendRedirect(contextPath + "/login.html");
             return;
         }
         chain.doFilter(request, response);
