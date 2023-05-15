@@ -1,12 +1,12 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-class Main {
+public class Main {
 
     public static void main(String[] args) throws Exception {
         // Get datasource
-        String loginUser = "mytestuser";
-        String loginPasswd = "My6$Password";
+        String loginUser = "cs122b";
+        String loginPasswd = "cs122b";
         String loginUrl = "jdbc:mysql://localhost:3306/moviedb";
 
         Class.forName("com.mysql.jdbc.Driver").newInstance();
