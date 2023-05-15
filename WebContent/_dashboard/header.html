@@ -1,0 +1,47 @@
+<header class="d-flex align-items-center py-2 px-3 mb-4 z-3 shadow gap-4"
+        style="
+            background: linear-gradient(50deg, #203e3b 0%, #2ba0cc 100%);
+            position: fixed;
+            left: 0;
+            top:0;
+            right: 0;
+            height: 60px;
+        "
+>
+    <a href="index.html">
+        <img class="d-block" src="../assets/logo_transparent.png" alt="Logo" width="120" height="50"/>
+    </a>
+    <div id="navigation" class="d-flex flex-row">
+        <a type="button"
+           href="index.html"
+           class="btn border-0 btn-dark bg-transparent border-radius-0 d-flex align-items-center ">
+            <h5 class="m-0">Metadata</h5>
+        </a>
+        <a type="button"
+           href="add-star.html"
+           class="btn border-0 btn-dark bg-transparent border-radius-0 d-flex align-items-center ">
+            <h5 class="m-0">Add Star</h5>
+        </a>
+        <a type="button"
+           href="add-movie.html"
+           class="btn border-0 btn-dark bg-transparent border-radius-0 d-flex align-items-center ">
+            <h5 class="m-0">Add Movie</h5>
+        </a>
+        <a type="button"
+           href="add-genre.html"
+           class="btn border-0 btn-dark bg-transparent border-radius-0 d-flex align-items-center ">
+            <h5 class="m-0">Add Genre</h5>
+        </a>
+    </div>
+    <!--    <h2 class="h2  text-center">Employee Dashboard</h2>-->
+    <!--placeholder-->
+    <!--    <div class="h2" style="width: 120px;"></div>-->
+</header>
+<!--placeholder-->
+<div style="height: 60px">
+    <script>
+        if (location.href.endsWith("login.html")) {
+            $("#navigation").detach()
+        }
+    </script>
+</div>

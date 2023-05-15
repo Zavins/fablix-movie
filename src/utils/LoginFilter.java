@@ -33,12 +33,16 @@ public class LoginFilter implements Filter {
             return;
         }
 
+        boolean isDashboard = httpRequest.getRequestURI().startsWith("/_dashboard");
         // Redirect to login page if the "user" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("user") == null) {
+        if (isDashboard && httpRequest.getSession().getAttribute("employee") == null) {
+            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() + "/_dashboard/login.html");
+            return;
+        } else if (!isDashboard && httpRequest.getSession().getAttribute("user") == null) {
             httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath() + "/login.html");
-        } else {
-            chain.doFilter(request, response);
+            return;
         }
+        chain.doFilter(request, response);
     }
 
     private boolean isUrlAllowedWithoutLogin(String requestURI) {
@@ -56,10 +60,11 @@ public class LoginFilter implements Filter {
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
         allowedURIs.add("api/login");
+        allowedURIs.add("api/employee/login");
         allowedURIs.add("login.css");
         allowedURIs.add("header.html");
         allowedURIs.add("logo_transparent.png");
-//        allowedURIs.add("api/movies");
+        allowedURIs.add("employee_logo_transparent.png");
 //        allowedURIs.add("api/movie");
 //        allowedURIs.add("api/genres");
 //        allowedURIs.add("api/star");
