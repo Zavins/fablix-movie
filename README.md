@@ -23,7 +23,34 @@ Chengxi Li
 - Importing large XML data files into the Fabflix database
 - Test the website and record the video
 
+## PreparedStatement Usage
+
+- src\servelets\CartCheckoutServlet.java
+- src\servelets\LoginServlet.java
+- src\servelets\MovieServlet.java
+- src\servelets\MoviesServlet.java
+- src\servelets\StarServlet.java
+- src\utils\Utils.java
+- src\servelets\_dashboard\LoginServlet.java
+- src\servelets\_dashboard\MetadataServlet.java
+- xml-parser\src\main\java\ActorParser.java
+- xml-parser\src\main\java\CastParser.java
+- xml-parser\src\main\java\MainParser.java
+
 ## Parser Optimization
+
+### Summary
+
+Optimizations:
+- Batch insert is used when inserting into movies, stars, and stars_in_movies tables.
+- Use hash map to cache genre id, movie id, and star id to avoid querying database.
+Also used hash set to check for duplicated records, avoiding querying database.
+These data structures allow O(1) time complexity for checking and inserting.
+- Index created on stars and movies table to speed up search
+
+Total speed up 1257 seconds. (Original parsing time = 1278 sseconds; optimized parsing time = 22 seconds)
+
+*Below is detail*
 
 ### Without optimization
 
@@ -66,23 +93,23 @@ All parsing finished in 21873ms
 
 ## Inconsistent Data
 
-The txt files are in the ./xml-parser folder.
+The txt files are in the `./xml-parser` folder.
 
-movie-duplicates.txt records the movies that are already in the database, which means the title, year, and director all
+`movie-duplicates.txt` records the movies that are already in the database, which means the title, year, and director all
 match an existing record.
 
-movie-errors.txt records the movies that caused an error when parsing mains243.xml, with reason in the file.
+`movie-errors.txt` records the movies that caused an error when parsing mains243.xml, with reason in the file.
 
-star-duplicates.txt records the stars that are already in the database, which means the name and birth year all match an
+`star-duplicates.txt` records the stars that are already in the database, which means the name and birth year all match an
 existing record.
 
-star-errors.txt records the stars that caused an error when parsing actors63.xml, with reason in the file.
+`star-errors.txt` records the stars that caused an error when parsing actors63.xml, with reason in the file.
 
-movie-not-found.txt records the movies that are not found in movies63.xml or database when parsing casts124.xml.
+`movie-not-found.txt` records the movies that are not found in movies63.xml or database when parsing casts124.xml.
 
-star-not-found.txt records the stars that are not found in actors63.xml when parsing casts124.xml.
+`star-not-found.txt` records the stars that are not found in actors63.xml when parsing casts124.xml.
 
-star-movie-errors.txt records the stars that caused an error when parsing casts124.xml, with reason in the file.
+`star-movie-errors.txt` records the stars that caused an error when parsing casts124.xml, with reason in the file.
 
 # Project 2
 
