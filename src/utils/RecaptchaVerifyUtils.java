@@ -14,7 +14,7 @@ public class RecaptchaVerifyUtils {
 
     public static final String SITE_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
-    public static String verify(String gRecaptchaResponse) throws Exception {
+    public static String verify(String gRecaptchaResponse, String platform) throws Exception {
         URL verifyUrl = new URL(SITE_VERIFY_URL);
 
         // Open Connection to URL
@@ -25,8 +25,9 @@ public class RecaptchaVerifyUtils {
         conn.setRequestProperty("models.User-Agent", "Mozilla/5.0");
         conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 
+        String secretKey = (platform != null && platform.equals("mobile")) ? RecaptchaConstants.SECRET_KEY_MOBILE : RecaptchaConstants.SECRET_KEY_WEB;
         // Data will be sent to the server.
-        String postParams = "secret=" + RecaptchaConstants.SECRET_KEY + "&response=" + gRecaptchaResponse;
+        String postParams = "secret=" + secretKey + "&response=" + gRecaptchaResponse;
 
         // Send Request
         conn.setDoOutput(true);

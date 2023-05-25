@@ -84,11 +84,11 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
-
+        String platform = request.getParameter("platform");
         JsonObject responseJsonObject = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
-            String recaptchaResult = RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+            String recaptchaResult = RecaptchaVerifyUtils.verify(gRecaptchaResponse, platform);
             System.out.println(recaptchaResult);
             if (recaptchaResult.equals("success")) {
                 if (checkUsername(conn, username)) {
