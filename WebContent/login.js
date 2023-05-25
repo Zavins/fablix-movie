@@ -36,7 +36,7 @@ $("#header").load("header.html");
             jQuery.ajax({
                 dataType: "json",
                 method: "POST",
-                data: {username: email, password: password, ['g-recaptcha-response']: recaptcha},
+                data: {username: email, password: password, ['g-recaptcha-response']: recaptcha, platform: "web"},
                 url: "api/login",
                 success: (resultData) => location.href = "index.html",
                 error: (message) => {
