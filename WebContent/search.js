@@ -28,6 +28,48 @@ const fillInSearchParams = () => {
 
 $(document).ready(function () {
     setTimeout(function () {
+        $('#title').autocomplete({
+            minChars: 3,
+            lookupLimit: 10,
+            deferRequestBy: 300,
+            lookup: function (query, done) {
+                console.log("Autocomplete query is initiated.")
+                let suggestions = sessionStorage.getItem(query)
+                // if found in session storage
+                if (suggestions != null) {
+                    console.log("using cached results");
+                    suggestions = JSON.parse(suggestions)
+                    console.log(suggestions)
+                    done({suggestions: suggestions})
+                    return;
+                }
+                //if not found, call the api
+                suggestions = []
+                jQuery.ajax({
+                    dataType: "json", // Setting return data type
+                    method: "GET", // Setting request method
+                    data: {"query": query},
+                    url: "api/autocomplete", // Setting request url, which is mapped by StarsServlet in Stars.java
+                    success: (resultData) => {
+                        resultData["result"].forEach((item) => {
+                            suggestions.push({value: `${item["title"]} (${item["year"]})`, data: item["id"]})
+                        })
+                        console.log("Send AJAX request to backend for the result")
+                        console.log(suggestions)
+                        sessionStorage.setItem(query, JSON.stringify(suggestions))
+                        done({suggestions: suggestions});
+                    },
+                    complete: (e, status) => {
+                        if (status === "parsererror" && !location.href.endsWith("login.html")) {
+                            location.reload();
+                        }
+                    },
+                });
+            },
+            onSelect: function (item) {
+                location.href = `single-movie.html?id=${item["data"]}`
+            }
+        });
         fillInSearchParams()
     }, 500)
 });

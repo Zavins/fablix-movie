@@ -34,13 +34,13 @@ public class Utils {
 
     public static String parseFullTextQuery(String query) {
         String fullTextQuery = "";
-        query.trim();
+        query = query.trim();
         String[] tokens = query.split(" ");
         for (String token : tokens) {
             if (!token.isEmpty()) {
                 fullTextQuery += "+" + token + "* ";
             }
         }
-        return fullTextQuery.trim();
+        return fullTextQuery.trim() + " >(\"" + query + "\")";
     }
 }
