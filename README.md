@@ -1,3 +1,36 @@
+# Project 4
+
+## Demo Video
+
+## Contribution
+
+Zhiyuan Wang
+- Implements Android app
+- Implements full-text search
+- Implements autocomplete frontend
+- Record the video
+
+Chengxi Li
+- Implements fuzzy search
+- fixed full-text search
+- prepared and tested deployment website
+
+## Fuzzy Search
+
+Fuzzy search is implemented using both SQL LIKE and Levenshtein distance.
+
+The SQL LIKE is used to find the movie title that contains (not just starts with) 
+the tokens in the keyword. 
+To avoid too many results and 
+keep the results meaningful, we only consider the tokens that are at least 5 characters long.
+
+The Levenshtein distance is used to find the movie title that is similar to the keyword.
+We check if title and keyword have a distance less than the threshold.
+The distance threshold is calculated as length(keyword) / 4.
+
+To combine with full-text search, we union the result. However, the full-text search
+result is always ranked higher than the fuzzy search result.
+
 # Project 3
 
 ## Demo Video
