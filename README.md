@@ -2,15 +2,23 @@
 
 ## Demo Video
 
+https://drive.google.com/file/d/1_41hdU4QCe2Q8b5xGA3j6kMtOmjk25nc/view?usp=sharing
+
+## Android Repository
+
+https://github.com/UCI-Chenli-teaching/cs-122b-qwq-android
+
 ## Contribution
 
 Zhiyuan Wang
+
 - Implements Android app
 - Implements full-text search
 - Implements autocomplete frontend
 - Record the video
 
 Chengxi Li
+
 - Implements fuzzy search
 - fixed full-text search
 - prepared and tested deployment website
@@ -19,9 +27,9 @@ Chengxi Li
 
 Fuzzy search is implemented using both SQL LIKE and Levenshtein distance.
 
-The SQL LIKE is used to find the movie title that contains (not just starts with) 
-the tokens in the keyword. 
-To avoid too many results and 
+The SQL LIKE is used to find the movie title that contains (not just starts with)
+the tokens in the keyword.
+To avoid too many results and
 keep the results meaningful, we only consider the tokens that are at least 5 characters long.
 
 The Levenshtein distance is used to find the movie title that is similar to the keyword.
@@ -75,10 +83,11 @@ Chengxi Li
 ### Summary
 
 Optimizations:
+
 - Batch insert is used when inserting into movies, stars, and stars_in_movies tables.
 - Use hash map to cache genre id, movie id, and star id to avoid querying database.
-Also used hash set to check for duplicated records, avoiding querying database.
-These data structures allow O(1) time complexity for checking and inserting.
+  Also used hash set to check for duplicated records, avoiding querying database.
+  These data structures allow O(1) time complexity for checking and inserting.
 - Index created on stars and movies table to speed up search
 
 Total speed up 1257 seconds. (Original parsing time = 1278 sseconds; optimized parsing time = 22 seconds)
@@ -128,12 +137,14 @@ All parsing finished in 21873ms
 
 The txt files are in the `./xml-parser` folder.
 
-`movie-duplicates.txt` records the movies that are already in the database, which means the title, year, and director all
+`movie-duplicates.txt` records the movies that are already in the database, which means the title, year, and director
+all
 match an existing record.
 
 `movie-errors.txt` records the movies that caused an error when parsing mains243.xml, with reason in the file.
 
-`star-duplicates.txt` records the stars that are already in the database, which means the name and birth year all match an
+`star-duplicates.txt` records the stars that are already in the database, which means the name and birth year all match
+an
 existing record.
 
 `star-errors.txt` records the stars that caused an error when parsing actors63.xml, with reason in the file.
