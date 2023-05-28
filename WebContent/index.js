@@ -97,7 +97,7 @@ $("#search-form").on("submit", function (e) {
 
     let params = {
         count: 25,
-        title: title ? `%${title}%` : '',
+        title: title !== "" ? title : '%',
         director: director && advanceSearch ? `%${director}%` : '',
         starName: starName && advanceSearch ? `%${starName}%` : '',
         year: year && advanceSearch ? year : '',

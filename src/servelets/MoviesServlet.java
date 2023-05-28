@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.Search;
+import utils.Utils;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -131,6 +132,9 @@ public class MoviesServlet extends HttpServlet {
             return;
         }
 
+        //If title is empty, it should not parse to fulltextquery.
+        title = title.equals("%") ? title : Utils.parseFullTextQuery(title);
+
         try (Connection conn = dataSource.getConnection()) {
             String query =
                     "SELECT m.`id`, m.`title`, m.`year`, m.`director`, r.`rating`, mglv.`genreList`, mslv.`starList` " +
@@ -141,7 +145,7 @@ public class MoviesServlet extends HttpServlet {
                             "WHERE " +
                             "(? OR m.`id` IN (SELECT gm.`movieId` FROM `moviedb`.`genres_in_movies` gm WHERE gm.`genreId` = ?))" +
                             "AND (? OR m.`id` IN (SELECT sm.`movieId` FROM `moviedb`.`stars_in_movies` sm JOIN `moviedb`.`stars` s ON s.`id` = sm.`starId` WHERE s.`name` LIKE ?)) " +
-                            "AND (? OR m.`title` LIKE ?) " +
+                            "AND (? OR " + (title.equals("%") ? "m.`title` Like ?) " : "MATCH m.`title` AGAINST(? IN BOOLEAN MODE)) ") +
                             "AND (? OR m.`director` LIKE ?) " +
                             "AND (? OR m.`year` = ?) " +
                             "ORDER BY " + sortBy + " " +
@@ -160,7 +164,7 @@ public class MoviesServlet extends HttpServlet {
                 statement.setInt(10, year == null ? 0 : year);
                 statement.setInt(11, (page - 1) * count); // offset
                 statement.setInt(12, count); // limit
-//                System.out.println(statement.toString());
+                System.out.println(statement);
                 try (ResultSet rs = statement.executeQuery()) {
                     JsonArray result = new JsonArray();
                     while (rs.next()) {
