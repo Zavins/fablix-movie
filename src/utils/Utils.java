@@ -41,6 +41,22 @@ public class Utils {
                 fullTextQuery += "+" + token + "* ";
             }
         }
-        return fullTextQuery.trim() + " >(\"" + query + "\")";
+        return fullTextQuery.trim() + " >\"" + query + "\"";
+    }
+
+    public static String parseFuzzyLikeQuery(String query) {
+        String likeQuery = "";
+        query = query.trim();
+        String[] tokens = query.split(" ");
+        for (String token : tokens) {
+            if (token.length() >= 5) {
+                likeQuery += "%" + token + "%";
+            }
+        }
+        return likeQuery;
+    }
+
+    public static int getFuzzyDistanceThreshold(String searchQuery) {
+        return searchQuery.length() / 4;
     }
 }

@@ -171,7 +171,7 @@ const updateSearchString = () => {
     let starName = $("#star").val()
     let year = $("#year").val()
     let paramMap = new Map()
-    paramMap.set("title", title !== "" ? title : '%')
+    paramMap.set("title", title)
     paramMap.set("director", director && advanceSearch ? `%${director}%` : '')
     paramMap.set("starName", starName && advanceSearch ? `%${starName}%` : '')
     paramMap.set("year", year && advanceSearch ? year : '')
@@ -194,7 +194,7 @@ const prepareParams = (params) => {
     return {
         usePrevious: params.get("usePrevious") ?? "0",
         count: params.get("count") ?? 25,
-        title: params.get("title") ?? "%",
+        title: params.get("title") ?? "",
         year: params.get("year") ?? "",
         director: params.get("director") ?? "",
         starName: params.get("starName") ?? "",

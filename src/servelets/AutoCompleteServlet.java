@@ -42,17 +42,28 @@ public class AutoCompleteServlet extends HttpServlet {
 
         if (searchQuery != null) {
             //If title is empty, it should not parse to fulltextquery.
-            searchQuery = Utils.parseFullTextQuery(searchQuery);
+            String fullTextQuery = Utils.parseFullTextQuery(searchQuery);
+            String likeQuery = Utils.parseFuzzyLikeQuery(searchQuery);
+            int distance = Utils.getFuzzyDistanceThreshold(searchQuery);
 
             try (Connection conn = dataSource.getConnection()) {
                 String query =
-                        "SELECT m.`id`, m.`title`, m.`year`, m.`director`" +
-                                "FROM `moviedb`.`movies` m " +
-                                "WHERE " +
-                                "MATCH(m.`title`) AGAINST(? IN BOOLEAN MODE)" +
-                                "LIMIT 10"; //Hardcode limit 10 :)
+                        "(" +
+                        "SELECT m.`id`, m.`title`, m.`year`, m.`director`\n" +
+                        "FROM `moviedb`.`movies` m\n" +
+                        "WHERE MATCH(m.`title`) AGAINST(? IN BOOLEAN MODE)\n" +
+                        "UNION\n" +
+                        "SELECT m.`id`, m.`title`, m.`year`, m.`director`\n" +
+                        "FROM `moviedb`.`movies` m\n" +
+                        "WHERE m.`title` LIKE ?\n" +
+                        "OR edth(LOWER(m.`title`), LOWER(?), ?)\n" +
+                        ") " +
+                        "LIMIT 10"; //Hardcode limit 10 :)
                 try (PreparedStatement statement = conn.prepareStatement(query)) {
-                    statement.setString(1, searchQuery);
+                    statement.setString(1, fullTextQuery);
+                    statement.setString(2, likeQuery);
+                    statement.setString(3, searchQuery);
+                    statement.setInt(4, distance);
                     System.out.println(statement);
                     try (ResultSet rs = statement.executeQuery()) {
                         JsonArray result = new JsonArray();
