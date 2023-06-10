@@ -3,6 +3,8 @@ package utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,5 +60,17 @@ public class Utils {
 
     public static int getFuzzyDistanceThreshold(String searchQuery) {
         return searchQuery.length() / 4;
+    }
+
+    public static void writeLogFile(String name, String content) {
+        try {
+            String homePath = System.getProperty("user.home");
+            String filePath = homePath + "/" + name;
+            FileWriter fileWriter = new FileWriter(filePath, true);
+            fileWriter.write(content);
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
