@@ -25,7 +25,7 @@ public class MoviesServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -267,13 +267,13 @@ public class MoviesServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-
-        response.setContentType("application/json");
-        response.getWriter().write(responseJsonObject.toString());
         long tsEndTime = System.nanoTime();
         long tsElapsedTime = tsEndTime - tsStartTime; // elapsed time in nanoseconds.
         long tjElapsedTime = (tjEndTime1 - tjStartTime1) + (tjEndTime2 - tjStartTime2);
         //Write both time to the log file
         Utils.writeLogFile("log.txt", tsElapsedTime + "," + tjElapsedTime + "\n");
+
+        response.setContentType("application/json");
+        response.getWriter().write(responseJsonObject.toString());
     }
 }
