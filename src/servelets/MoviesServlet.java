@@ -35,6 +35,11 @@ public class MoviesServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        long tsStartTime = System.nanoTime(); //Record TS start time.
+        long tjStartTime1 = 0;
+        long tjEndTime1 = 0;
+        long tjStartTime2 = 0;
+        long tjEndTime2 = 0;
 
         response.setContentType("application/json");
 
@@ -165,7 +170,9 @@ public class MoviesServlet extends HttpServlet {
                 statement.setInt(14, (page - 1) * count); // offset
                 statement.setInt(15, count); // limit
                 System.out.println(statement);
+                tjStartTime1 = System.nanoTime();
                 try (ResultSet rs = statement.executeQuery()) {
+                    tjEndTime1 = System.nanoTime();
                     JsonArray result = new JsonArray();
                     while (rs.next()) {
                         String rowId = rs.getString("id");
@@ -246,7 +253,9 @@ public class MoviesServlet extends HttpServlet {
                 statement.setString(11, director == null ? "" : director);
                 statement.setBoolean(12, year == null);
                 statement.setInt(13, year == null ? 0 : year);
+                tjStartTime2 = System.nanoTime();
                 try (ResultSet rs = statement.executeQuery()) {
+                    tjEndTime2 = System.nanoTime();
                     rs.next();
                     responseJsonObject.addProperty("numPages", rs.getInt(1) / count + 1);
                 }
@@ -258,7 +267,13 @@ public class MoviesServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+
         response.setContentType("application/json");
         response.getWriter().write(responseJsonObject.toString());
+        long tsEndTime = System.nanoTime();
+        long tsElapsedTime = tsStartTime - tsEndTime; // elapsed time in nanoseconds.
+        long tjElapsedTime = (tjStartTime1 - tjEndTime1) + (tjStartTime2 - tjEndTime2);
+        //Write both time to the log file
+        Utils.writeLogFile("ElapsedTime.log", tsElapsedTime + "," + tjElapsedTime + "\n");
     }
 }
