@@ -66,6 +66,7 @@ public class Utils {
         try {
             String homePath = System.getProperty("user.home");
             String filePath = homePath + "/" + name;
+            System.out.println(filePath);
             FileWriter fileWriter = new FileWriter(filePath, true);
             fileWriter.write(content);
             fileWriter.close();
