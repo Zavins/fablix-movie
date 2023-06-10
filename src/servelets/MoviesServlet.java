@@ -271,9 +271,9 @@ public class MoviesServlet extends HttpServlet {
         response.setContentType("application/json");
         response.getWriter().write(responseJsonObject.toString());
         long tsEndTime = System.nanoTime();
-        long tsElapsedTime = tsStartTime - tsEndTime; // elapsed time in nanoseconds.
-        long tjElapsedTime = (tjStartTime1 - tjEndTime1) + (tjStartTime2 - tjEndTime2);
+        long tsElapsedTime = tsEndTime - tsStartTime; // elapsed time in nanoseconds.
+        long tjElapsedTime = (tjEndTime1 - tjStartTime1) + (tjEndTime2 - tjStartTime2);
         //Write both time to the log file
-        Utils.writeLogFile("ElapsedTime.log", tsElapsedTime + "," + tjElapsedTime + "\n");
+        Utils.writeLogFile("log.txt", tsElapsedTime + "," + tjElapsedTime + "\n");
     }
 }
