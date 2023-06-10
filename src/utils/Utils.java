@@ -64,7 +64,8 @@ public class Utils {
 
     public static void writeLogFile(String name, String content) {
         try {
-            String homePath = System.getProperty("user.home");
+//            String homePath = System.getProperty("user.home");
+            String homePath = "/home/ubuntu/perf_logs";
             String filePath = homePath + "/" + name;
             System.out.println(filePath);
             FileWriter fileWriter = new FileWriter(filePath, true);
