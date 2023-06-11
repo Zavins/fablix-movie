@@ -8,10 +8,72 @@
     - #### Project 5 Video Demo Link:
 
     - #### Instruction of deployment:
-        - TODO: LEO
+        ##### For single instance version
+        - Use `single-instace-with-pool` branch
+        - Create database
+            ```
+            sudo mysql < s23-122b-qwq/mysql/create_table.sql
+            sudo mysql < s23-122b-qwq/mysql/index.sql
+            sudo mysql < movie-data.sql
+            sudo mysql < s23-122b-qwq/mysql/stored-procedure.sql
+            sudo mysql < s23-122b-qwq/mysql/alter_sales_table_add_quantity.sql
+            sudo mysql < s23-122b-qwq/mysql/alter_movie_table_add_fulltext.sql
+            ```
+        - Update password
+            ```
+            cd ~/s23-122b-qwq/encryption
+            mvn compile
+            mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="UpdateSecurePassword"
+            ```
+        - Parse XML
+            ```
+            cd xml-parser
+            cp ~/stanford-movies/*.xml .
+            mvn compile
+            mvn exec:java -Dexec.cleanupDaemonThreads=false -Dexec.mainClass="Main"
+            ```
+        - Deploy
+            ```
+            mvn package
+            sudo cp ./target/*.war /var/lib/tomcat10/webapps/
+            ```
+        ##### For scaled version (master and slave)
+        - Use `main` branch
+        - Setup MySQL master slave duplication
+            ```
+            master-mysql> show master status;
+            slave-mysql> stop slave;
+            slave-mysql> CHANGE MASTER TO MASTER_HOST='<master ip>', MASTER_USER='repl', MASTER_PASSWORD='slave66Pass$word', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=337;
+            slave-mysql> start slave;
+            slave-mysql> show slave status;
+            ```
+        - On master, create database
+        - On master, update password
+        - On master, parse XML
+        - On master and slave, deploy war file
+        - On load balancer, setup proxy and sticky session
+            In apache2 config file
+            ```
+            Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
+            <Proxy "balancer://Session_balancer">
+                BalancerMember "http://<master ip>:8080/cs122b-project" route=1
+                BalancerMember "http://<slave ip>:8080/cs122b-project" route=2
+            ProxySet stickysession=ROUTEID
+            </Proxy> 
+            ```
+            and
+            ```
+            ProxyPass /cs122b-project balancer://Session_balancer
+            ProxyPassReverse /cs122b-project balancer://Session_balancer
+            ```
+            and restart
+            ```sudo service apache2 restart```
+            
 
     - #### Collaborations and Work Distribution:
-        - TODO: LEO
+        - ##### Chengxi Li:
+            - Setup MySQL master slave duplication (task 2)
+            - Setup load balancer (task 3)
         - ##### ZhiYuan Wang:
             - Add connection pooling configuration.
             - Use jmeter to test different test cases.
@@ -20,17 +82,72 @@
 
 - # Connection Pooling
     - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
+        `WebContent/META-INF/context.xml` is the configuration file for connection pooling,
+        where the following config are added/modified for connection pooling.
+        ```   factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+              testOnBorrow="true" validationQuery="SELECT 1"
+              url="jdbc:mysql://mp.fablix.tech:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+        ```
+        Specifically, we added `testOnBorrow="true" validationQuery="SELECT 1"` to avoid SQL connection error,
+        and `cachePrepStmts=true` to utilize prepared statement cache.
+        
+        The prepared statements are used in
+        - `AutoCompleteServlet` (in `src/servelets`)
+        - `CartCheckoutServlet`
+        - `LoginServlet`
+        - `MovieServlet`
+        - `MoviesServlet`
+        - `StarServlet`
+        - `LoginServlet` (in `src/servelets/_dashboard`)
+        - `MetadataServlet`
+        - `Utils` (in `src/utils`)
 
     - #### Explain how Connection Pooling is utilized in the Fabflix code.
+        In servlets where SQL connection is needed, we first get a dataSource from the context.
+        ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```
+        Then, we get a connection from the pool by `dataSource.getConnection()`.
+        The server has some connections in the pool. 
+        When a servlet needs a connection, it takes one from the pool.
+        When the servlet closes the connection, the connection is returned to the pool for future reuse.
 
     - #### Explain how Connection Pooling works with two backend SQL.
-
+        In the scaled version, when we have two datasources, 
+        one for the read/write master database and the other for the read only database (will be routed to master or slave).
+        We added the config for connection pooling to each datasource.
+        In this way, each datasource/database has its own pool of connections.
 
 - # Master/Slave
     - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
+        Datasource config: `WebContent/META-INF/context.xml` and `WebContent/WEB-INF/web.xml`
+        Servlets that use read-only datasource (routed to master or slave database):
+        - `src/servelets/AutoCompleteServlet.java`
+        - `src/servelets/CartServlet.java`
+        - `src/servelets/GenresServlet.java`
+        - `src/servelets/LoginServlet.java`
+        - `src/servelets/MovieServlet.java`
+        - `src/servelets/MoviesServlet.java`
+        - `src/servelets/StarServlet.java`
+        - `src/servelets/StarsServlet.java`
+        - `src/servelets/_dashboard/LoginServlet.java`
+        - `src/servelets/_dashboard/MetadataServlet.java`
+        Servlets that use read/write datasource (routed to master)
+        - `src/servelets/CartCheckoutServlet.java`
+        - `src/servelets/_dashboard/AddGenreServlet.java`
+        - `src/servelets/_dashboard/AddMovieServlet.java`
+        - `src/servelets/_dashboard/AddStarServlet.java`
 
     - #### How read/write requests were routed to Master/Slave SQL?
-
+        We created two datasources, 
+        `moviedb_rw` for the read/write database (routed to master) 
+        and `moviedb_ro` for the read only database (routed to master or slave).
+        The read/write datasource `moviedb_rw` is connected to the master database.
+        The read-only datasource `moviedb_ro` is connected to both master and slave databases,
+        where requests are distributed evenly using the load balancing feature provided by MySQL Connector/J
+        ([doc](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-managing-load-balanced-connections.html)).
+        The load balance is configured like `url="jdbc:mysql:loadbalance://<master ip>:3306,<slave ip>:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"`.
+        Codes sending write SQL like `insert` will use the read/write datasource `moviedb_rw`, 
+        whereas codes sending `select` SQL will use the read-only datasource `moviedb_ro`. Files are listed above.
 
 - # JMeter TS/TJ Time Logs
     - #### Single-instance cases:
