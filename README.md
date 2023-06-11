@@ -89,6 +89,7 @@
               testOnBorrow="true" validationQuery="SELECT 1"
               url="jdbc:mysql://mp.fablix.tech:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
         ```
+        
         Specifically, we added `testOnBorrow="true" validationQuery="SELECT 1"` to avoid SQL connection error,
         and `cachePrepStmts=true` to utilize prepared statement cache.
         
@@ -107,6 +108,7 @@
         In servlets where SQL connection is needed, we first get a dataSource from the context.
         ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```.
         Then, we get a connection from the pool by `dataSource.getConnection()`.
+        
         The server has some connections in the pool. 
         When a servlet needs a connection, it takes one from the pool.
         When the servlet closes the connection, the connection is returned to the pool for future reuse.
@@ -132,6 +134,7 @@
         - `src/servelets/StarsServlet.java`
         - `src/servelets/_dashboard/LoginServlet.java`
         - `src/servelets/_dashboard/MetadataServlet.java`
+        
         Servlets that use read/write datasource (routed to master)
         - `src/servelets/CartCheckoutServlet.java`
         - `src/servelets/_dashboard/AddGenreServlet.java`
@@ -146,7 +149,10 @@
         The read-only datasource `moviedb_ro` is connected to both master and slave databases,
         where requests are distributed evenly using the load balancing feature provided by MySQL Connector/J
         ([doc](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-managing-load-balanced-connections.html)).
-        The load balance is configured like `url="jdbc:mysql:loadbalance://<master ip>:3306,<slave ip>:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"`.
+        
+        The load balance is configured like `url="jdbc:mysql:loadbalance://<master ip>:3306,<slave ip>:3306/moviedb?<...>"`.
+        By default, it uses a round-robin load balancing strategy.
+        
         Codes sending write SQL like `insert` will use the read/write datasource `moviedb_rw`, 
         whereas codes sending `select` SQL will use the read-only datasource `moviedb_ro`. Files are listed above.
 
