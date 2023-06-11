@@ -120,6 +120,7 @@
 - # Master/Slave
     - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
         Datasource config: `WebContent/META-INF/context.xml` and `WebContent/WEB-INF/web.xml`
+        
         Servlets that use read-only datasource (routed to master or slave database):
         - `src/servelets/AutoCompleteServlet.java`
         - `src/servelets/CartServlet.java`
