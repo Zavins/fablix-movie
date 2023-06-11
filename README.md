@@ -34,15 +34,17 @@
 
 - # JMeter TS/TJ Time Logs
     - #### Single-instance cases:
-        - Use HTTP, without using Connection Pooling, 10 threads in JMeter([Log](/logs/http_10_single_no_pooling.txt)).
-        - Use HTTP, 1 thread in JMeter.
-        - Use HTTP, 10 threads in JMeter.
-        - Use HTTPS, 10 threads in JMeter.
+        - Use HTTP, without using Connection Pooling, 10 threads in JMeter ([Log](/logs/http_10_single_no_pooling.txt)).
+        - Use HTTP, 1 thread in JMeter ([Log](/logs/http_1_single_pooling.txt)).
+        - Use HTTP, 10 threads in JMeter ([Log](/logs/http_10_single_pooling.txt)).
+        - Use HTTPS, 10 threads in JMeter ([Log](/logs/https_10_single_pooling.txt)).
     - #### Scaled-version cases:
         - Use HTTP, without using Connection Pooling, 10 threads in
           JMeter ([Master Log](/logs/http_10_scaled_no_pooling_master.txt), [Slave Log](/logs/http_10_scaled_no_pooling_slave.txt)).
-        - Use HTTP, 1 thread in JMeter.
-        - Use HTTP, 10 threads in JMeter.
+        - Use HTTP, 1 thread in
+          JMeter ([Master Log](/logs/http_1_scaled_pooling_master.txt), [Slave Log](/logs/http_1_scaled_pooling_slave.txt)).
+        - Use HTTP, 10 threads in
+          JMeter ([Master Log](/logs/http_10_scaled_pooling_master.txt), [Slave Log](/logs/http_10_scaled_pooling_slave.txt)).
 
     - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
         - Install Python.
@@ -51,17 +53,17 @@
 
 - # JMeter TS/TJ Time Measurement Report
 
-| **Single-instance Version Test Plan**         | **Graph Results Screenshot**                                     | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
-|-----------------------------------------------|------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                         | ![](path to image in img/)                                       | ??                         | ??                                  | ??                        | ??           |
-| Case 2: HTTP/10 threads                       | ![](path to image in img/)                                       | ??                         | ??                                  | ??                        | ??           |
-| Case 3: HTTPS/10 threads                      | ![](path to image in img/)                                       | ??                         | ??                                  | ??                        | ??           |
-| Case 4: HTTP/10 threads/No connection pooling | ![HTTP 10 Single No Pooling](/img/http_10_single_no_pooling.png) | 4691                       | 4518.59                             | 3700.81                   | ??           |
+| **Single-instance Version Test Plan**         | **Graph Results Screenshot**                                      | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
+|-----------------------------------------------|-------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Single With Pooling](/img/http_1_single_pooling.png)     | 988                        | 869.74                              | 869.1                     | ??           |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Single With Pooling](/img/http_10_single_pooling.png)   | 4651                       | 4553.56                             | 4553.13                   | ??           |
+| Case 3: HTTPS/10 threads                      | ![HTTPS 10 Single With Pooling](/img/https_10_single_pooling.png) | 4707                       | 4605.54                             | 4605.16                   | ??           |
+| Case 4: HTTP/10 threads/No connection pooling | ![HTTP 10 Single No Pooling](/img/http_10_single_no_pooling.png)  | 4691                       | 4518.59                             | 3700.81                   | ??           |
 
 | **Scaled Version Test Plan**                  | **Graph Results Screenshot**                                     | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
 |-----------------------------------------------|------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                         | ![](path to image in img/)                                       | ??                         | ??                                  | ??                        | ??           |
-| Case 2: HTTP/10 threads                       | ![](path to image in img/)                                       | ??                         | ??                                  | ??                        | ??           |
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Scaled With Pooling](/img/http_1_scaled_pooling.png)    | 979                        | 857.56                              | 856.89                    | ??           |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Scaled With Pooling](/img/http_10_scaled_pooling.png)  | 2864                       | 2762.67                             | 2761.54                   | ??           |
 | Case 3: HTTP/10 threads/No connection pooling | ![HTTP 10 Scaled No Pooling](/img/http_10_scaled_no_pooling.png) | 2908                       | 2804.5                              | 2803.44                   | ??           |
 
 # Project 4
