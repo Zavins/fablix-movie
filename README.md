@@ -105,7 +105,7 @@
 
     - #### Explain how Connection Pooling is utilized in the Fabflix code.
         In servlets where SQL connection is needed, we first get a dataSource from the context.
-        ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```
+        ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```.
         Then, we get a connection from the pool by `dataSource.getConnection()`.
         The server has some connections in the pool. 
         When a servlet needs a connection, it takes one from the pool.
