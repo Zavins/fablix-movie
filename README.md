@@ -6,9 +6,9 @@
     - #### Names: Chengxi Li, ZhiYuan Wang
 
     - #### Project 5 Video Demo Link:
-
+        - https://drive.google.com/file/d/1UYEmXR2y_1IB8u7TwzWhHyzu6BWhf-y_/view?usp=drive_link
     - #### Instruction of deployment:
-        ##### For single instance version
+      ##### For single instance version
         - Use `single-instace-with-pool` branch
         - Create database
             ```
@@ -37,7 +37,7 @@
             mvn package
             sudo cp ./target/*.war /var/lib/tomcat10/webapps/
             ```
-        ##### For scaled version (master and slave)
+      ##### For scaled version (master and slave)
         - Use `main` branch
         - Setup MySQL master slave duplication
             ```
@@ -52,7 +52,7 @@
         - On master, parse XML
         - On master and slave, deploy war file
         - On load balancer, setup proxy and sticky session
-            In apache2 config file
+          In apache2 config file
             ```
             Header add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/" env=BALANCER_ROUTE_CHANGED
             <Proxy "balancer://Session_balancer">
@@ -61,14 +61,13 @@
             ProxySet stickysession=ROUTEID
             </Proxy> 
             ```
-            and
+          and
             ```
             ProxyPass /cs122b-project balancer://Session_balancer
             ProxyPassReverse /cs122b-project balancer://Session_balancer
             ```
-            and restart
-            ```sudo service apache2 restart```
-            
+          and restart
+          ```sudo service apache2 restart```
 
     - #### Collaborations and Work Distribution:
         - ##### Chengxi Li:
@@ -82,18 +81,18 @@
 
 - # Connection Pooling
     - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
-        `WebContent/META-INF/context.xml` is the configuration file for connection pooling,
-        where the following config are added/modified for connection pooling.
+      `WebContent/META-INF/context.xml` is the configuration file for connection pooling,
+      where the following config are added/modified for connection pooling.
         ```   factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               testOnBorrow="true" validationQuery="SELECT 1"
               url="jdbc:mysql://mp.fablix.tech:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
         ```
-        
-        Specifically, we added `testOnBorrow="true" validationQuery="SELECT 1"` to avoid SQL connection error,
-        and `cachePrepStmts=true` to utilize prepared statement cache.
-        
-        The prepared statements are used in
+
+      Specifically, we added `testOnBorrow="true" validationQuery="SELECT 1"` to avoid SQL connection error,
+      and `cachePrepStmts=true` to utilize prepared statement cache.
+
+      The prepared statements are used in
         - `AutoCompleteServlet` (in `src/servelets`)
         - `CartCheckoutServlet`
         - `LoginServlet`
@@ -105,25 +104,26 @@
         - `Utils` (in `src/utils`)
 
     - #### Explain how Connection Pooling is utilized in the Fabflix code.
-        In servlets where SQL connection is needed, we first get a dataSource from the context.
-        ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```.
-        Then, we get a connection from the pool by `dataSource.getConnection()`.
-        
-        The server has some connections in the pool. 
-        When a servlet needs a connection, it takes one from the pool.
-        When the servlet closes the connection, the connection is returned to the pool for future reuse.
+      In servlets where SQL connection is needed, we first get a dataSource from the context.
+      ```dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb_ro")```.
+      Then, we get a connection from the pool by `dataSource.getConnection()`.
+
+      The server has some connections in the pool.
+      When a servlet needs a connection, it takes one from the pool.
+      When the servlet closes the connection, the connection is returned to the pool for future reuse.
 
     - #### Explain how Connection Pooling works with two backend SQL.
-        In the scaled version, when we have two datasources, 
-        one for the read/write master database and the other for the read only database (will be routed to master or slave).
-        We added the config for connection pooling to each datasource.
-        In this way, each datasource/database has its own pool of connections.
+      In the scaled version, when we have two datasources,
+      one for the read/write master database and the other for the read only database (will be routed to master or
+      slave).
+      We added the config for connection pooling to each datasource.
+      In this way, each datasource/database has its own pool of connections.
 
 - # Master/Slave
     - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
-        Datasource config: `WebContent/META-INF/context.xml` and `WebContent/WEB-INF/web.xml`
-        
-        Servlets that use read-only datasource (routed to master or slave database):
+      Datasource config: `WebContent/META-INF/context.xml` and `WebContent/WEB-INF/web.xml`
+
+      Servlets that use read-only datasource (routed to master or slave database):
         - `src/servelets/AutoCompleteServlet.java`
         - `src/servelets/CartServlet.java`
         - `src/servelets/GenresServlet.java`
@@ -134,27 +134,28 @@
         - `src/servelets/StarsServlet.java`
         - `src/servelets/_dashboard/LoginServlet.java`
         - `src/servelets/_dashboard/MetadataServlet.java`
-        
-        Servlets that use read/write datasource (routed to master)
+
+      Servlets that use read/write datasource (routed to master)
         - `src/servelets/CartCheckoutServlet.java`
         - `src/servelets/_dashboard/AddGenreServlet.java`
         - `src/servelets/_dashboard/AddMovieServlet.java`
         - `src/servelets/_dashboard/AddStarServlet.java`
 
     - #### How read/write requests were routed to Master/Slave SQL?
-        We created two datasources, 
-        `moviedb_rw` for the read/write database (routed to master) 
-        and `moviedb_ro` for the read only database (routed to master or slave).
-        The read/write datasource `moviedb_rw` is connected to the master database.
-        The read-only datasource `moviedb_ro` is connected to both master and slave databases,
-        where requests are distributed evenly using the load balancing feature provided by MySQL Connector/J
-        ([doc](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-managing-load-balanced-connections.html)).
-        
-        The load balance is configured like `url="jdbc:mysql:loadbalance://<master ip>:3306,<slave ip>:3306/moviedb?<...>"`.
-        By default, it uses a round-robin load balancing strategy.
-        
-        Codes sending write SQL like `insert` will use the read/write datasource `moviedb_rw`, 
-        whereas codes sending `select` SQL will use the read-only datasource `moviedb_ro`. Files are listed above.
+      We created two datasources,
+      `moviedb_rw` for the read/write database (routed to master)
+      and `moviedb_ro` for the read only database (routed to master or slave).
+      The read/write datasource `moviedb_rw` is connected to the master database.
+      The read-only datasource `moviedb_ro` is connected to both master and slave databases,
+      where requests are distributed evenly using the load balancing feature provided by MySQL Connector/J
+      ([doc](https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-usagenotes-j2ee-concepts-managing-load-balanced-connections.html)).
+
+      The load balance is configured
+      like `url="jdbc:mysql:loadbalance://<master ip>:3306,<slave ip>:3306/moviedb?<...>"`.
+      By default, it uses a round-robin load balancing strategy.
+
+      Codes sending write SQL like `insert` will use the read/write datasource `moviedb_rw`,
+      whereas codes sending `select` SQL will use the read-only datasource `moviedb_ro`. Files are listed above.
 
 - # JMeter TS/TJ Time Logs
     - #### Single-instance cases:
@@ -172,23 +173,22 @@
 
     - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
         - Install Python.
-        - Run:
-      > python log_processing.py log_file [log_file2 ...]
+        - Run:`$python log_processing.py log_file [log_file2 ...]`
 
 - # JMeter TS/TJ Time Measurement Report
 
-| **Single-instance Version Test Plan**         | **Graph Results Screenshot**                                      | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
-|-----------------------------------------------|-------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                         | ![HTTP 1 Single With Pooling](/img/http_1_single_pooling.png)     | 988                        | 869.74                              | 869.1                     | ??           |
-| Case 2: HTTP/10 threads                       | ![HTTP 10 Single With Pooling](/img/http_10_single_pooling.png)   | 4651                       | 4553.56                             | 4553.13                   | ??           |
-| Case 3: HTTPS/10 threads                      | ![HTTPS 10 Single With Pooling](/img/https_10_single_pooling.png) | 4707                       | 4605.54                             | 4605.16                   | ??           |
-| Case 4: HTTP/10 threads/No connection pooling | ![HTTP 10 Single No Pooling](/img/http_10_single_no_pooling.png)  | 4691                       | 4518.59                             | 3700.81                   | ??           |
+| **Single-instance Version Test Plan**         | **Graph Results Screenshot**                                      | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis**                                                                                                                                                                                                                                                                                                                                                                                                                            |
+|-----------------------------------------------|-------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Single With Pooling](/img/http_1_single_pooling.png)     | 988                        | 869.74                              | 869.1                     | The query time is faster than others because there is only one thread running, and the server is only handling one request at a time.                                                                                                                                                                                                                                                                                                   |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Single With Pooling](/img/http_10_single_pooling.png)   | 4651                       | 4553.56                             | 4553.13                   | The query time is slower than using 1 thread because there are 10 requests sending at one time, and the server needs to allocate more resources and time to process these requests.                                                                                                                                                                                                                                                     |
+| Case 3: HTTPS/10 threads                      | ![HTTPS 10 Single With Pooling](/img/https_10_single_pooling.png) | 4707                       | 4605.54                             | 4605.16                   | The query time is similar to the one using HTTP protocol because the protocol shouldn't have a big effect in server time since the server is processing the same content.                                                                                                                                                                                                                                                               |
+| Case 4: HTTP/10 threads/No connection pooling | ![HTTP 10 Single No Pooling](/img/http_10_single_no_pooling.png)  | 4691                       | 4518.59                             | 3700.81                   | The query time is slower than 10 threads with connection pooling because it needs to open and close a connection every time which is not reused. However, the JDBC time (SQL execution time) is faster than its counterpart because, without connection pooling, MySQL only keep the necessary amount of connections with the servlet, reducing the overhead in MySQL of connection pooling and resulting in faster SQL execution time. |
 
-| **Scaled Version Test Plan**                  | **Graph Results Screenshot**                                     | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
-|-----------------------------------------------|------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
-| Case 1: HTTP/1 thread                         | ![HTTP 1 Scaled With Pooling](/img/http_1_scaled_pooling.png)    | 979                        | 857.56                              | 856.89                    | ??           |
-| Case 2: HTTP/10 threads                       | ![HTTP 10 Scaled With Pooling](/img/http_10_scaled_pooling.png)  | 2864                       | 2762.67                             | 2761.54                   | ??           |
-| Case 3: HTTP/10 threads/No connection pooling | ![HTTP 10 Scaled No Pooling](/img/http_10_scaled_no_pooling.png) | 2908                       | 2804.5                              | 2803.44                   | ??           |
+| **Scaled Version Test Plan**                  | **Graph Results Screenshot**                                     | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis**                                                                                                                                                                                                                                                                  |
+|-----------------------------------------------|------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Scaled With Pooling](/img/http_1_scaled_pooling.png)    | 979                        | 857.56                              | 856.89                    | The query time is faster than others because there is only one thread running, and the server is only handling one request at a time. It has the same result as test case 1 of single instance because only one instance (either master or slave) is processing the requests. |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Scaled With Pooling](/img/http_10_scaled_pooling.png)  | 2864                       | 2762.67                             | 2761.54                   | The query time is almost cut by half of the test case 2 of single instance because we enabled the load balancer which allows both masters and slaves to handle the requests.                                                                                                  |
+| Case 3: HTTP/10 threads/No connection pooling | ![HTTP 10 Scaled No Pooling](/img/http_10_scaled_no_pooling.png) | 2908                       | 2804.5                              | 2803.44                   | The query time is slower than test case 2 of same test plan because without the connection pooling, the server has to create new connections everytime, which would increase a little bit of additional time.                                                                 |
 
 # Project 4
 
