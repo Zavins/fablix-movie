@@ -1,3 +1,71 @@
+# Project 5
+
+- # General
+    - #### Team: QWQ
+
+    - #### Names: Chengxi Li, ZhiYuan Wang
+
+    - #### Project 5 Video Demo Link:
+
+    - #### Instruction of deployment:
+        - TODO: LEO
+
+    - #### Collaborations and Work Distribution:
+        - TODO: LEO
+        - ##### ZhiYuan Wang:
+            - Add connection pooling configuration.
+            - Use jmeter to test different test cases.
+            - Create [log_processing.py](/logs/log_processing.py) script to calculate the average query time.
+            - Add the report the README
+
+- # Connection Pooling
+    - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
+
+    - #### Explain how Connection Pooling is utilized in the Fabflix code.
+
+    - #### Explain how Connection Pooling works with two backend SQL.
+
+
+- # Master/Slave
+    - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
+
+    - #### How read/write requests were routed to Master/Slave SQL?
+
+
+- # JMeter TS/TJ Time Logs
+    - #### Single-instance cases:
+        - Use HTTP, without using Connection Pooling, 10 threads in JMeter ([Log](/logs/http_10_single_no_pooling.txt)).
+        - Use HTTP, 1 thread in JMeter ([Log](/logs/http_1_single_pooling.txt)).
+        - Use HTTP, 10 threads in JMeter ([Log](/logs/http_10_single_pooling.txt)).
+        - Use HTTPS, 10 threads in JMeter ([Log](/logs/https_10_single_pooling.txt)).
+    - #### Scaled-version cases:
+        - Use HTTP, without using Connection Pooling, 10 threads in
+          JMeter ([Master Log](/logs/http_10_scaled_no_pooling_master.txt), [Slave Log](/logs/http_10_scaled_no_pooling_slave.txt)).
+        - Use HTTP, 1 thread in
+          JMeter ([Master Log](/logs/http_1_scaled_pooling_master.txt), [Slave Log](/logs/http_1_scaled_pooling_slave.txt)).
+        - Use HTTP, 10 threads in
+          JMeter ([Master Log](/logs/http_10_scaled_pooling_master.txt), [Slave Log](/logs/http_10_scaled_pooling_slave.txt)).
+
+    - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
+        - Install Python.
+        - Run:
+      > python log_processing.py log_file [log_file2 ...]
+
+- # JMeter TS/TJ Time Measurement Report
+
+| **Single-instance Version Test Plan**         | **Graph Results Screenshot**                                      | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
+|-----------------------------------------------|-------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Single With Pooling](/img/http_1_single_pooling.png)     | 988                        | 869.74                              | 869.1                     | ??           |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Single With Pooling](/img/http_10_single_pooling.png)   | 4651                       | 4553.56                             | 4553.13                   | ??           |
+| Case 3: HTTPS/10 threads                      | ![HTTPS 10 Single With Pooling](/img/https_10_single_pooling.png) | 4707                       | 4605.54                             | 4605.16                   | ??           |
+| Case 4: HTTP/10 threads/No connection pooling | ![HTTP 10 Single No Pooling](/img/http_10_single_no_pooling.png)  | 4691                       | 4518.59                             | 3700.81                   | ??           |
+
+| **Scaled Version Test Plan**                  | **Graph Results Screenshot**                                     | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
+|-----------------------------------------------|------------------------------------------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
+| Case 1: HTTP/1 thread                         | ![HTTP 1 Scaled With Pooling](/img/http_1_scaled_pooling.png)    | 979                        | 857.56                              | 856.89                    | ??           |
+| Case 2: HTTP/10 threads                       | ![HTTP 10 Scaled With Pooling](/img/http_10_scaled_pooling.png)  | 2864                       | 2762.67                             | 2761.54                   | ??           |
+| Case 3: HTTP/10 threads/No connection pooling | ![HTTP 10 Scaled No Pooling](/img/http_10_scaled_no_pooling.png) | 2908                       | 2804.5                              | 2803.44                   | ??           |
+
 # Project 4
 
 ## Demo Video
