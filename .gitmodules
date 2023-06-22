@@ -1,0 +1,4 @@
+[submodule "android"]
+	path = android
+	url = https://github.com/Zavins/fablix-movie-android.git
+	branch = main
